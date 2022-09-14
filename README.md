@@ -29,13 +29,16 @@ In order to use a different senosr instead, you would need to change a few lines
 
 ### Special Features
 - **Colors**
-  - RED: Switch is currently moving the direction. No train should no be passing the switch!
+  - RED: Switch is currently moving the direction. No train should now be passing the switch!
   - Orange: Currently a switch is detected in front of the sensor
   - Yellow: Currently no train is in front of the sensor, but was a short time ago (so either the transition of two wagons is in front of the sensor or the train passed completely the sensor)
   - Green: otherwise
   - In case of the two sensor program, the first color in the list is shown whose condition is true for at least one sensor
 - **Battery Power**: To indicate the state of charge of the battery, the shown color switches the brightness each second. 1st second the full brightness is visible, 2nd second the brightness is only the remaining state of charge, so one can detect the contrast. To control this behavior, change the variables min_voltage and max_voltage. In particular, max_voltage should be 6\*1.2V = 7.2V, but is set to a lower value, s.t. the blinking will start only after some hours (like when only 50% of the capacity is left). Note that estimating the *true* state of charge is not trivial at all and the given predictor is very naive and works only as simple indicator that the battery might be empty soon. For hubs running the switch controller code are working fine for more than 10 hours without battery problems.
 - **Power Off**: Use the green button of the hub to power the controller off. This might cause resetting the switches to the initial state.
+
+
+## EV3 (31313)
 
 
 
