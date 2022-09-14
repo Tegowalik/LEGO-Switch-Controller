@@ -8,6 +8,8 @@ In principle, all the programs work in the same way: Trains are detected by an d
 Unfortunately depending on the harware type, different ways of programming is required. 
 
 ## Powered Up Hubs
+For using powered up hubs, you can use any type of motor with rotation sensor being compatible with the powered up system. 
+
 |Description | Image | City Hub | Technic Hub |
 |-|-|-|-|
 |1 sensor + 1 switch | TODO | TOOD | TODO |
