@@ -39,6 +39,13 @@ In order to use a different senosr instead, you would need to change a few lines
 
 
 ## EV3 (31313)
+To run python programs on an EV3, you first need to follow these [instructions](https://pybricks.com/install/mindstorms-ev3/installation/). After that you can use the following programs:
+
+|description | image | program |
+|-|-|-|
+|TODO | TODO| TODO|
 
 
 
+## Mindstorms (51515)
+Currently only a 1 sensor + 1 switch design is available: TODO
