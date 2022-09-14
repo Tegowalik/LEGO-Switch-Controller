@@ -48,4 +48,4 @@ To run python programs on an EV3, you first need to follow these [instructions](
 
 
 ## Mindstorms (51515)
-Currently only a 1 sensor + 1 switch design is available: [program](51515_switch_1_1.lms). You can run it by using the official LEGO Mindstorms Software with Python Programming.
+Currently only a 1 sensor + 1 switch design is [available](51515_switch_1_1.lms). You can run it by using the official LEGO Mindstorms Software with Python Programming.
