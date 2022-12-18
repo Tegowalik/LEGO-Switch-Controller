@@ -39,7 +39,7 @@ Note that the structure of the 1 sensor + 1 switch program differs completely co
 - **Power Off**: Use the green button of the hub to power the controller off. This might cause resetting the switches to the initial state.
 
 
-## Mindstorms (51515)
+## Mindstorms (Robot Inventor 51515, Spike Prime 45678)
 Currently only a 1 sensor + 1 switch design is [available](51515_switch_1_1.lms). You can run it by using the official LEGO Mindstorms Software with Python Programming.
 
 ## EV3 (31313)
