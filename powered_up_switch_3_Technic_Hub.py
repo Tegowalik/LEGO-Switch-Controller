@@ -1,5 +1,5 @@
 from pybricks.hubs import TechnicHub
-from pybricks.pupdevices import Motor, Remote, ColorDistanceSensor
+from pybricks.pupdevices import Motor, Remote, ColorDistanceSensor, ColorSensor, UltrasonicSensor, InfraredSensor
 from pybricks.parameters import Port, Direction, Button, Color, Stop
 from pybricks.tools import wait
 from urandom import random
@@ -63,23 +63,26 @@ class SwitchDistanceSensor(SwitchSensor):
         super().__init__(criticalDistance)
         self.sensor = ColorDistanceSensor(port)
 
+
 class SwitchIRSensor(SwitchSensor):
-    
-    def __init__(self, port : Port, criticalDistance = 7):
-        super(criticalDistance)
+
+    def __init__(self, port: Port, criticalDistance=7):
+        super().__init__(criticalDistance)
         self.sensor = InfraredSensor(port)
 
+
 class SwitchUltrasonicSensor(SwitchSensor):
-    
-    def __init__(self, port : Port, criticalDistance = 7):
-        super(criticalDistance)
+
+    def __init__(self, port: Port, criticalDistance=7):
+        super().__init__(criticalDistance)
         self.sensor = UltrasonicSensor(port)
 
+
 class SwitchColorSensor(SwitchSensor):
-    
-    def __init__(self, port : Port, criticalReflection):
-        super(criticalReflection)
-        self.criticalReflection = criticalReflection
+
+    def __init__(self, port: Port, criticalReflection):
+        super().__init__(criticalReflection)
+        self.sensor = ColorSensor(port)
 
     def check(self):
         if self.sensor.reflection() < self.criticalReflection:
@@ -87,7 +90,6 @@ class SwitchColorSensor(SwitchSensor):
         else:
             self.reset()
         return False
-
 
 class SwitchMotor:
     def __init__(self, 
