@@ -101,6 +101,7 @@ class SwitchMotor:
         self.switchPosition = switchPosition
         self.initialPosition = switchPosition
         self.motor = Motor(port, direction)
+        self.motor.reset_angle(0)
         self.successors = {}
         self.power = 500
         self.stop_mode = Stop.BRAKE
