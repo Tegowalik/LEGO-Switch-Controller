@@ -19,7 +19,7 @@ These motors occur in motorized LEGO Technic Sets (like Liebherr R 9800 Excavato
 
 As sensor any sensor which can determine a distance is possible. The pictures are again taken from the (PyBricks Documentation](https://docs.pybricks.com/en/latest/pupdevices/index.html).
 
-| Sensor | Color & Distance Sensor | Infrared/ Motion Sensor | Ultrasonic Sensor | Color Sensor |
+| **Sensor** | **Color & Distance Sensor** | **Infrared/ Motion Sensor** | **Ultrasonic Sensor** | **Color Sensor** |
 |-|-|-|-|-|
 | LEGO item/ part number | item 88007 | item 20844 | part 37316c01 | part 37308c01 |
 | LEGO sets with this sensor | BOOST Creative Toolbox (17101), Droid Commander (75253), [sold as single item at LEGO store](https://www.lego.com/en-us/product/color-distance-sensor-88007) |  Grand Piano (21323), WeDo 2.0 Core Set (45300) | Robot Inventor (51515), SPIKE Prime Set (45678) | Robot Inventor (51515), SPIKE Essential Set (45345), SPIKE Prime Expansion Set (45681), SPIKE Prime Set (45678) |
@@ -27,7 +27,18 @@ As sensor any sensor which can determine a distance is possible. The pictures ar
 
 Since all sensors except the Color & Distance Sensor is used only in MINDSTORMS/ SPIKE sets (which are EOL 2022), this sensor seems to be the most suitable - also because it is sold individually by LEGO and is relatively cheap.
 
+Once you have organized the hub, motor(s) and sensor(s), you are ready to run the program. Therefore you need a hub dependant *code basis* and a switch layout dependant *configuration part*
 
+### Code Basis
+| City Hub | [CityHub.py](CityHub.py) |
+| Technic Hub | [TechnicHub.py](TechnicHub.py) |
+
+### Configuration Part
+Depending on your actual switch layout, you need to add a few lines to the program right below the line
+  # configure your switch layout here
+
+### City Hub
+Since the [City Hub](https://www.lego.com/en-us/product/hub-88009) (the hub used for the City trains) has only two ports, the only possible configuraiton consists of  
 
 
 
