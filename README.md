@@ -49,30 +49,100 @@ The following examples should cover the most important switch-sensor-motor-combi
 
 ```python
 sensor = SwitchDistanceSensor(Port.A)
+  
 motor = SwitchMotor(Port.B)
+  
 controller.registerSensor(sensor, motor)
 ```
 
   </td><td>
 
 ```python
-# create a SwitchDistanceSensor with higher critical distance (60) instead of the default value 40 -> sensor can be placed further away from the tracks
+# create a SwitchDistanceSensor with higher critical distance (60) 
+# instead of the default value 40 
+# -> sensor can be placed further away from the tracks
+  
 sensor = SwitchDistanceSensor(Port.A, criticalDistance=60)
-# probability_straigth_to_curved > probability_curved_to_straigth means that the switch will be more often in the curved state than in the straight one
-motor = SwitchMotor(Port.B, probability_curved_to_straigth=0.5, probability_straigth_to_curved=0.8)
+# probability_straigth_to_curved > probability_curved_to_straigth 
+# means that the switch will be more often in the curved state 
+# than in the straight one
+motor = SwitchMotor(Port.B, 
+                    probability_curved_to_straigth=0.5, 
+                    probability_straigth_to_curved=0.8,
+                    switchPosition=SwitchPosition.STRAIGHT)
+  
 controller.registerSensor(sensor, motor)
 ```
 
   </td>
 </tr>
 <tr>
-<td> 400 </td>
+<td> 1 Sensor + 2 Motors </td>
   <td>TODO</td>
 <td>
 
-**Markdown** _here_. (Blank lines needed before and after!)
+```python
+sensor = SwitchDistanceSensor(Port.A)
+  
+motor1 = SwitchMotor(Port.B)
+motor2 = SwitchMotor(Port.C)
+motor1.registerSuccessor(motor2, SwitchPosition.CURVED)
+  
+controller.registerSensor(sensor, motor)
+```
 
-</td>
+  </td><td>
+
+```python  
+sensor = SwitchDistanceSensor(Port.A, criticalDistance=60)
+
+motor1 = SwitchMotor(Port.B, switchposition=SwitchPosition.CURVED)
+motor2 = SwitchMotor(Port.C, 
+                    probability_curved_to_straigth=0.5, 
+                    probability_straigth_to_curved=0.8)
+motor1.registerSuccessor(motor2, SwitchPosition.CURVED)
+  
+controller.registerSensor(sensor, motor)
+```
+
+  </td>
+</tr>
+  <tr>
+<td> 1 Sensor + 3 Motors </td>
+  <td>TODO</td>
+<td>
+
+```python
+sensor = SwitchDistanceSensor(Port.A)
+  
+motor1 = SwitchMotor(Port.B)
+motor2 = SwitchMotor(Port.C)
+motor3 = SwitchMotor(Port.D)
+motor1.registerSuccessor(motor2, SwitchPosition.CURVED)
+motor1.registerSuccessor(motor3, SwitchPosition.STRAIGHT)
+  
+controller.registerSensor(sensor, motor)
+```
+
+  </td><td>
+
+```python  
+sensor = SwitchDistanceSensor(Port.A, criticalDistance=30)
+
+motor1 = SwitchMotor(Port.B, switchposition=SwitchPosition.CURVED)
+motor2 = SwitchMotor(Port.C, 
+                    probability_straigth_to_curved=0.8)
+motor3 = SwitchMotor(Port.D, 
+                     probability_straigth_to_curved=1.0, 
+                     probability_curved_to_straigth=1.0,
+                     switchPosition=SwitchPosition.CURVED)
+motor1.registerSuccessor(motor2, SwitchPosition.CURVED)
+motor1.registerSuccessor(motor3, SwitchPosition.STRAIGHT)
+  
+controller.registerSensor(sensor, motor)
+```
+
+  </td>
 </tr>
 </table>
 
