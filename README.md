@@ -37,7 +37,7 @@ Once you have organized the hub, motor(s) and sensor(s), you are ready to run th
 ### Configuration Part
 Depending on your actual switch layout, you need to add a few lines to the program right below the line `# configure your switch layout here`.
 
-The following examples should cover the most important switch-sensor-motor-combinations. You might need to make little changes (like changing the used sensor type or port).
+The following examples should cover the most important switch-sensor-motor-combinations. You might need to make little changes (like changing the used sensor type, port or parameter values).
 
 | Description | Picture | Code |
 |-|-|-|
