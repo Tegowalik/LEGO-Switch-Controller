@@ -36,7 +36,7 @@ Once you have organized the hub, motor(s) and sensor(s), you are ready to run th
 ### Powered Up Configuration Part
 Depending on your actual switch layout, you need to add a few lines to the program right below the line `# configure your switch layout here`.
 
-The following examples should cover the most important switch-sensor-motor-combinations. You might need to make little changes (like changing the used sensor type, port or parameter values). Note that depending on your specific train layout some parameters might need to be adjusted as explained in the [Special Features](#Special Features) section.
+The following examples should cover the most important switch-sensor-motor-combinations. You might need to make little changes (like changing the used sensor type, port or parameter values). Note that depending on your specific train layout some parameters might need to be adjusted as explained in the [Special Features](#powered_up_special_features) section.
 
 <table>
 <tr>
@@ -108,7 +108,7 @@ Note that for the [City Hub](https://www.lego.com/en-us/product/hub-88009) (the 
 
 Personally, I recommend to first running the program without including the current program to the firmware. So you can easily experiment different settings and see what fits your purposes best (errors can be seen in the terminal). Once the program is ready flash the hub with including the current program to the firmware (Currently this option is available under "Settings" -> "Firmware" -> "Include current program"). This causes that flashed program is executed whenever the hub is started in the future - unless you reflash it again. You can easily reflash the original LEGO firmware by connecting the hub to the powered up app. The disadvantage of the flashing the program to the firmware is that you can no longer see the terminal output, so make sure that the program runs without errors before doing this.
 
-### Special Features
+### Powered Up Special Features
 - **Colors**:
   - `RED`: Switch is currently moving the direction. No train should now be passing the switch!
   - `ORANGE`: Currently a switch is detected in front of the sensor
@@ -144,7 +144,7 @@ The [PyBricks](https://pybricks.com/) code for these hubs works similar to the o
 
 > Currently, these hubs are only supported by the PyBricks beta, so make sure to use the right app: [https://beta.pybricks.com/](https://beta.pybricks.com/).
 
-Using the MINDSTORMS code basis, all [Powered Up Configuration Examples](#Powered_Up_Configuration_Part) can also be used for the MINDSTORMS Hubs. But because of the additional available ports, even more (complex) configurations become possible:
+Using the MINDSTORMS code basis, all [Powered Up Configuration Examples](#powered_up_configuration_part) can also be used for the MINDSTORMS Hubs. But because of the additional available ports, even more (complex) configurations become possible:
 
 
 <table>
@@ -194,7 +194,7 @@ controller.registerSensor(sensor, motor)
 In case you don't want to flash your MINDSTORMS with PyBricks firmware, you can still use a version for the official LEGO Mindstorms Software with Python Programming: [MINDSTORMS_51515.lms](MINDSTORMS_51515.lms)/ [MINDSTORMS_51515_LEGO_python.py](MINDSTORMS_51515_LEGO_python.py). However, because of the very limited functionality of the programming language, only a 1 Switch + 1 Motor layout is provided (with less modification possibilities compared to the PyBricks version). 
 
 ### Special Features
-Additionally to the Powered Up Hub Speical Features the light matrix is used to indicate the progress of the sensor timeout. Depending on the number of sensors the color matrix shows progress bar(s) indicating the timeout progress. If a motor is currently moving, the color matrix shows a cross ('x') additionally to the red light.
+Additionally to the [Powered Up Hub Speical Features](#powered_up_special_features) the light matrix is used to indicate the progress of the sensor timeout. Depending on the number of sensors the color matrix shows progress bar(s) indicating the timeout progress. If a motor is currently moving, the color matrix shows a cross ('x') additionally to the red light.
 
 TODO add gifs
 
