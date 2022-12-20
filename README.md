@@ -205,7 +205,7 @@ Personally, I recommend to first running the program without including the curre
   - Green: otherwise (sensor is waiting for an incoming train)
   - In case of the multiple sensor programs, the first color in the list is shown whose condition is true for at least one sensor
 - **Power Off**: Use the green button of the hub to power the controller off. This might cause resetting the switches to the initial state.
-- **Probabilities** TODO
+- **Probabilities**: The constructor `SwitchMotor` has the optional parameters `probability_straigth_to_curved` and `probability_curved_to_straigth` (default value `0.5` each). The default configuration means, that the motor moves on average after every second train. Setting both parameter to `1.0` means that the motor moves at every train. Setting `probability_straigth_to_curved < probability_curved_to_straigth` means that the motor is more often in the *straight* position.
 - **Motor Auto Calibration** TODO (also add code)
 - **Critical Distances** TODO
 - **Rising/ Falling Edge** TODO
