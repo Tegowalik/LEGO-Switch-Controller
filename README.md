@@ -1,9 +1,7 @@
 # Pybricks Switch Controller
 Automate your LEGO train tracks by randomly change the direction of switches by detecting incoming trains. An example usage is presented here: https://youtu.be/EsnzuTQ5WIw?t=199
 
-In principle, all the programs work in the same way: Trains are detected by an distance sensor which causes the switch to change direction (at least with some probability). The reason for the different program files consists in
-- the different hardware components (powered up City Hub/ Technic Hub, MINDSTORMS Robot Inventor 51515, MINDSTORMS EV3 31313, Spike Prime)
-- the different possible switch layouts (1 sensor + 1 switch, 1 sensor + 2 switches in a row, 2 sensors with 1 switch each, ...)
+In principle, all the programs work in the same way: Trains are detected by an distance sensor which causes the switch to change direction (at least with some probability). Depending on the used hardware components (Powered Up City Hub/ Technic Hub, MINDSTORMS Robot Inventor 51515, MINDSTORMS EV3 31313, Spike Prime) different programs are required as explained later in detail.
 
 Most of the provided programs are running [PyBricks](https://pybricks.com/) code. However, for LEGO MINDSTORMs EV3 (31313) [EV3 MicroPython](https://pybricks.com/ev3-micropython/) is used. The LEGO MINDSTORMS Robot Inventor (51515) can be used either with PyBricks or with the official [LEGO MINDSTORMS Software with Python Programming](https://lego.github.io/MINDSTORMS-Robot-Inventor-hub-API/).
 
@@ -38,11 +36,11 @@ Once you have organized the hub, motor(s) and sensor(s), you are ready to run th
 ### Powered Up Configuration Part
 Depending on your actual switch layout, you need to add a few lines to the program right below the line `# configure your switch layout here`.
 
-The following examples should cover the most important switch-sensor-motor-combinations. You might need to make little changes (like changing the used sensor type, port or parameter values). The provided *Easy Code* is a minimal working code example for the given setup. The *Advanced Code* shows which parameters can be used to modify the behaviour.
+The following examples should cover the most important switch-sensor-motor-combinations. You might need to make little changes (like changing the used sensor type, port or parameter values). Note that depending on your specific train layout some parameters might need to be adjusted as explained in the [Special Features](#Special Features) section.
 
 <table>
 <tr>
-  <td>Description </td> <td>Picture </td> <td>Easy Code </td> <td>Advanced Code</td>
+  <td>Description </td> <td>Picture </td> <td>Easy Code </td>
 </tr>
 <tr>
   <td>1 Sensor + 1 Switch </td> <td>TODO</td>
