@@ -144,50 +144,104 @@ The [PyBricks](https://pybricks.com/) code for these hubs works similar to the o
 
 > Currently, these hubs are only supported by the PyBricks beta, so make sure to use the right app: [https://beta.pybricks.com/](https://beta.pybricks.com/).
 
-Using the MINDSTORMS code basis, all [Powered Up Configuration Examples](#powered-up-configuration-part) can also be used for the MINDSTORMS Hubs. But because of the additional available ports, even more (complex) configurations become possible:
-
+Using the MINDSTORMS code basis, all [Powered Up Configuration Examples](#powered-up-configuration-part) can also be used for the MINDSTORMS Hubs. But because of the additional available ports, even more (complex) configurations become possible. Again you need to add the few lines to the program right below the line `# configure your switch layout here`.
 
 <table>
 <tr>
-  <td>Description </td> <td>Picture </td> <td>Easy Code </td> <td>Advanced Code</td>
+  <td>Description </td> <td>Picture </td> <td>Easy Code </td>
 </tr>
 <tr>
-  <td>2 Sensor + 3 Switch </td> <td>TODO</td>
+  <td>2 Sensors + 3 Switchs </td> <td>TODO</td>
 <td>
 
 ```python
-sensor = SwitchDistanceSensor(Port.A)
-  
-motor = SwitchMotor(Port.B)
-  
-controller.registerSensor(sensor, motor)
-```
-
-  </td><td>
-
-```python
-# create a SwitchDistanceSensor with higher critical distance (60) 
-# instead of the default value 40 
-# -> sensor will trigger if object is in front with distance 
-# less than 40 (no unit; value means proportion of reflected light)
-# -> sensor can be placed further away from the tracks
-  
-sensor = SwitchDistanceSensor(Port.A, criticalDistance=60)
-# probability_straigth_to_curved > probability_curved_to_straigth 
-# means that the switch will be more often in the curved state 
-# than in the straight one
-motor = SwitchMotor(Port.B, 
-                    probability_curved_to_straigth=0.5, 
-                    probability_straigth_to_curved=0.8,
-                    switchPosition=SwitchPosition.STRAIGHT)
-  
-controller.registerSensor(sensor, motor)
+sensor1 = SwitchUltrasonicSensor(Port.A)
+sensor2 = SwitchColorSensor(Port.B)
+motor1 = SwitchMotor(Port.C)
+motor2 = SwitchMotor(Port.D)
+motor3 = SwitchMotor(Port.E)
+motor1.registerSuccessor(motor2)  
+controller.registerSensor(sensor1, motor1)
+controller.registerSensor(sensor2, motor3)
 ```
 
   </td>
 </tr>
- TODO 2 sensor, 4 motor
-  TODO 3 sensor, 3 motor
+  <tr>
+  <td>2 Sensors + 4 Switchs (2 times (1 Sensor + 2 Switch) </td> <td>TODO</td>
+<td>
+
+```python
+sensor1 = SwitchUltrasonicSensor(Port.A)
+sensor2 = SwitchColorSensor(Port.B)
+motor1 = SwitchMotor(Port.C)
+motor2 = SwitchMotor(Port.D)
+motor3 = SwitchMotor(Port.E)
+motor4 = SwitchMotor(Port.F)
+motor1.registerSuccessor(motor2, switchPosition=SwitchPosition.CURVED)  
+motor2.registerSuccessor(motor4, switchPosition=SwitchPosition.CURVED)
+controller.registerSensor(sensor1, motor1)
+controller.registerSensor(sensor2, motor3)
+```
+
+  </td>
+</tr>
+    <tr>
+  <td>2 Sensors + 4 Switchs (1 Sensor + 1 Switch and 1 Sensor + (1+2)  Switches) </td> <td>TODO</td>
+<td>
+
+```python
+sensor1 = SwitchUltrasonicSensor(Port.A)
+sensor2 = SwitchColorSensor(Port.B)
+motor1 = SwitchMotor(Port.C)
+motor2 = SwitchMotor(Port.D)
+motor3 = SwitchMotor(Port.E)
+motor4 = SwitchMotor(Port.F)
+motor2.registerSuccessor(motor3, switchPosition=SwitchPosition.STRAIGHT)  
+motor2.registerSuccessor(motor4, switchPosition=SwitchPosition.CURVED)
+controller.registerSensor(sensor1, motor1)
+controller.registerSensor(sensor2, motor2)
+```
+
+  </td>
+</tr>
+<tr>
+  <td>2 Sensors + 4 Switchs (1 Sensor + 1 Switch and 1 Sensor + (1+1+1)  Switches) </td> <td>TODO</td>
+<td>
+
+```python
+sensor1 = SwitchUltrasonicSensor(Port.A)
+sensor2 = SwitchColorSensor(Port.B)
+motor1 = SwitchMotor(Port.C)
+motor2 = SwitchMotor(Port.D)
+motor3 = SwitchMotor(Port.E)
+motor4 = SwitchMotor(Port.F)
+motor2.registerSuccessor(motor3, switchPosition=SwitchPosition.CURVED)  
+motor3.registerSuccessor(motor4, switchPosition=SwitchPosition.CURVED)
+controller.registerSensor(sensor1, motor1)
+controller.registerSensor(sensor2, motor2)
+```
+
+  </td>
+</tr>
+      <tr>
+  <td>3 Sensors + 3 Switchs</td> <td>TODO</td>
+<td>
+
+```python
+sensor1 = SwitchUltrasonicSensor(Port.A)
+sensor2 = SwitchColorSensor(Port.B)
+sensor3 = SwitchDistanceSensor(Port.C)
+motor1 = SwitchMotor(Port.D)
+motor2 = SwitchMotor(Port.E)
+motor3 = SwitchMotor(Port.F)
+controller.registerSensor(sensor1, motor1)
+controller.registerSensor(sensor2, motor2)
+controller.registerSensor(sensor3, motor3)
+```
+
+  </td>
+</tr>
 </table>
 
 
