@@ -36,7 +36,7 @@ Once you have organized the hub, motor(s) and sensor(s), you are ready to run th
 ### Powered Up Configuration Part
 Depending on your actual switch layout, you need to add a few lines to the program right below the line `# configure your switch layout here`.
 
-The following examples should cover the most important switch-sensor-motor-combinations. You might need to make little changes (like changing the used sensor type, port or parameter values). Note that depending on your specific train layout some parameters might need to be adjusted as explained in the [Special Features](#powered_up_special_features) section.
+The following examples should cover the most important switch-sensor-motor-combinations. You might need to make little changes (like changing the used sensor type, port or parameter values). Note that depending on your specific train layout some parameters might need to be adjusted as explained in the [Special Features](#-powered-up-special-features) section.
 
 <table>
 <tr>
@@ -144,7 +144,7 @@ The [PyBricks](https://pybricks.com/) code for these hubs works similar to the o
 
 > Currently, these hubs are only supported by the PyBricks beta, so make sure to use the right app: [https://beta.pybricks.com/](https://beta.pybricks.com/).
 
-Using the MINDSTORMS code basis, all [Powered Up Configuration Examples](#powered_up_configuration_part) can also be used for the MINDSTORMS Hubs. But because of the additional available ports, even more (complex) configurations become possible:
+Using the MINDSTORMS code basis, all [Powered Up Configuration Examples](# powered-up-configuration-part) can also be used for the MINDSTORMS Hubs. But because of the additional available ports, even more (complex) configurations become possible:
 
 
 <table>
