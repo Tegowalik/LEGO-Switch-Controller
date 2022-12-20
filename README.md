@@ -208,11 +208,15 @@ Personally, I recommend to first running the program without including the curre
 - **Probabilities** TODO
 - **Motor Auto Calibration** TODO (also add code)
 - **Critical Distances** TODO
+- **Rising/ Falling Edge** TODO
 
 
 ## MINDSTORMS (Robot Inventor 51515, SPIKE Prime 45678)
 The [PyBricks](https://pybricks.com/) code for these hubs works similar to the ones using the Powered Up Hubs. You just need to use the special code basis: [MINDSTORMS_51515.py](MINDSTORMS_51515.py). (I haven't tested it for the SPIKE Prime, but according to the PyBricks documentation, the code should work as well).
-Using this code basis, all [Powered Up Configuration Examples](#Powered_Up_Configuration_Part) can also be used for the MINDSTORMS Hubs. But because of the additional available ports, even more (complex) configurations become possible:
+
+> Currently, these hubs are only supported by the PyBricks beta, so make sure to use the right app: [https://beta.pybricks.com/](https://beta.pybricks.com/).
+
+Using the MINDSTORMS code basis, all [Powered Up Configuration Examples](#Powered_Up_Configuration_Part) can also be used for the MINDSTORMS Hubs. But because of the additional available ports, even more (complex) configurations become possible:
 
 
 <table>
@@ -262,9 +266,10 @@ controller.registerSensor(sensor, motor)
 In case you don't want to flash your MINDSTORMS with PyBricks firmware, you can still use a version for the official LEGO Mindstorms Software with Python Programming: [MINDSTORMS_51515.lms](MINDSTORMS_51515.lms)/ [MINDSTORMS_51515_LEGO_python.py](MINDSTORMS_51515_LEGO_python.py). However, because of the very limited functionality of the programming language, only a 1 Switch + 1 Motor layout is provided (with less modification possibilities compared to the PyBricks version). 
 
 ### Special Features
-Additionally to the Powered Up Hub Speical Features the light matrix is used to indicate the progress of the sensor timeout. Depending on the number of sensors the color matrix shows progress bar(s) indicating the timeout progress.
+Additionally to the Powered Up Hub Speical Features the light matrix is used to indicate the progress of the sensor timeout. Depending on the number of sensors the color matrix shows progress bar(s) indicating the timeout progress. If a motor is currently moving, the color matrix shows a cross ('x') additionally to the red light.
 
 TODO add gifs
+
 
 ## MINDSTORMS EV3 (31313)
 To run python programs on an EV3, you first need to follow these [instructions](https://pybricks.com/install/mindstorms-ev3/installation/). After that you can use the following programs:
