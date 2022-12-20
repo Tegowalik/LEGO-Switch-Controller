@@ -1,5 +1,5 @@
-from pybricks.hubs import PrimeHub
-from pybricks.pupdevices import Motor, Remote, ColorDistanceSensor, InfraredSensor, ColorSensor, UltrasonicSensor
+from pybricks.hubs import TechnicHub
+from pybricks.pupdevices import Motor, ColorDistanceSensor, InfraredSensor, ColorSensor, UltrasonicSensor
 from pybricks.parameters import Port, Direction, Button, Color, Stop
 from pybricks.tools import wait
 from urandom import random
@@ -24,12 +24,9 @@ class SwitchSensor():
 
     def __init__(self, criticalDistance, switchMode=SwitchMode.FALLING_EDGE, init_timeout=40):
         self.criticalDistance = criticalDistance
-        self.switchMode = switchMode
         self.init_timeout = init_timeout
-        if switchMode == SwitchMode.RISING_EDGE:
-            self.timeout = 0
-        else:
-            self.reset()
+        self.set_switch_mode(switch_mode)
+
 
     # The 'timeout' is used as following: the timeout is resetted (i. e. set to a
     # positive number) if a train is currently detected in front of the train. If no
@@ -76,17 +73,24 @@ class SwitchSensor():
         self.init_timeout = init_timeout
         self.timeout = init_timeout
 
+    def set_switch_mode(switch_mode : SwitchMode):
+        self.switchMode = switchMode
+        if switchMode == SwitchMode.RISING_EDGE:
+            self.timeout = 0
+        else:
+            self.reset()
+
 # a color distance sensor (LEGO item 88007)
 class SwitchDistanceSensor(SwitchSensor):
     # critical distance in %
-    def __init__(self, port : Port, criticalDistance = 30):
+    def __init__(self, port : Port, criticalDistance=30):
         super().__init__(criticalDistance)
         self.sensor = ColorDistanceSensor(port)
 
 # the motion/ IR sensor known from LEGO WeDo 2.0 or the Grand Piano (LEGO item 20844)
 class SwitchIRSensor(SwitchSensor):
     # critical distance in %
-    def __init__(self, port : Port, criticalDistance = 20):
+    def __init__(self, port : Port, criticalDistance=20):
         super().__init__(criticalDistance)
         self.sensor = InfraredSensor(port)
 
@@ -94,14 +98,14 @@ class SwitchIRSensor(SwitchSensor):
 class SwitchUltrasonicSensor(SwitchSensor):
     
     # critical distance in mm
-    def __init__(self, port : Port, criticalDistance = 200):
+    def __init__(self, port : Port, criticalDistance=200):
         super().__init__(criticalDistance)
         self.sensor = UltrasonicSensor(port)
 
 # the color sensor known from LEGO Mindstorms 51515 (LEGO part 37308c01)
 class SwitchColorSensor(SwitchSensor):
     # critical distance in %
-    def __init__(self, port : Port, criticalDistance = 85):
+    def __init__(self, port : Port, criticalDistance=85):
         super().__init__(criticalDistance)
         self.sensor = ColorSensor(port)
 
@@ -120,11 +124,11 @@ class SwitchColorSensor(SwitchSensor):
 class SwitchMotor:
     def __init__(self, 
             port : Port, 
-            switchPosition = SwitchPosition.STRAIGTH, 
-            direction = Direction.CLOCKWISE,
-            probability_straigth_to_curved = 0.5,
-            probability_curved_to_straigth = 0.5,
-            turn_degrees = None):
+            switchPosition=SwitchPosition.STRAIGTH, 
+            direction=Direction.CLOCKWISE,
+            probability_straigth_to_curved=0.5,
+            probability_curved_to_straigth=0.5,
+            turn_degrees=None):
         self.probabilities = {SwitchPosition.STRAIGTH: probability_straigth_to_curved,
                                 SwitchPosition.CURVED: probability_curved_to_straigth}
         self.switchPosition = switchPosition
@@ -133,7 +137,6 @@ class SwitchMotor:
         self.successors = {}
         self.power = 500
         self.stop_mode = Stop.COAST
-        self.display = None
 
         if turn_degrees is None:
             self.calibrate()
@@ -165,7 +168,6 @@ class SwitchMotor:
         return self.angle1 if self.angle == self.angle2 else self.angle2
 
     def move(self):
-        self.display.cross()
         if self.switchPosition == SwitchPosition.STRAIGTH:
             self.switchPosition = SwitchPosition.CURVED
         elif self.switchPosition == SwitchPosition.CURVED:
@@ -189,89 +191,30 @@ class SwitchMotor:
         for motor in self.successors.values():
             motor.reset()
 
-    def setDisplay(self, display: LightMatrix):
-        self.display = display
-
-class LightMatrix():
-
-    def __init__(self, hub):
-        self.hub = hub
-
-
-    def update(self, timeouts, init_timeouts):
-        amount = len(timeouts)
-        if amount == 1:
-            self.update_one(timeouts, init_timeouts)
-        elif amount == 2:
-            self.update_two(timeouts, init_timeouts)
-        elif amount == 3:
-            self.update_three(timeouts, init_timeouts)
-        else:
-            print("Unknown amount")
-            print(amount)
-
-    def _convert(self, pixel_number, total_pixel, proportion):
-        if pixel_number / total_pixel <= proportion:
-            return 100
-        elif (pixel_number - 1) / total_pixel <= proportion:
-            return  int(100 * (total_pixel * proportion - (pixel_number - 1)))
-        else:
-            return 0
-
-    def update_one(self, timeouts, init_timeouts):
-        proportion = timeouts[0] / init_timeouts[0]
-        matrix = [[self._convert(j * 5 + i + 1, 25, proportion) for i in range(5)] for j in range(5)]
-        hub.display.icon(matrix)
-    
-    def update_two(self, timeouts, init_timeouts):
-        data = []
-        for index in range(2):
-            proportion = timeouts[index] / init_timeouts[index]
-            m = [[self._convert(j * 2 + i + 1, 10, proportion) for i in range(2)] for j in range(5)]
-            data.append(m)
-        matrix = [[data[0][i][0], data[0][i][1], 0, data[1][i][0], data[1][i][1]] for i in range(5)]
-        hub.display.icon(matrix)
-
-    def update_three(self, timeouts, init_timeouts):
-        data = []
-        for index in range(3):
-            proportion = timeouts[index] / init_timeouts[index]
-            m = [self._convert(j + 1, 5, proportion) for j in range(5)]
-            data.append(m)
-        matrix = [[data[0][i], 0, data[1][i], 0, data[2][i]] for i in range(5)]
-        hub.display.icon(matrix)
-
-    def cross(self):
-        matrix = [[100, 0, 0, 0, 100], [0, 100, 0, 100, 0], [0, 0, 100, 0, 0], [0, 100, 0, 100, 0], [100, 0, 0, 0, 100]]
-        hub.display.icon(matrix)
-
 
 class SwitchController():
 
-    def __init__(self, hub = None, dt=50):
+    def __init__(self, hub=None, dt=50):
         self.sensors = {}
         self.dt = dt
         self.hub = hub
         self.initializeHub()
-        self.display = LightMatrix(hub)
         
     def registerSensor(self, sensor : SwitchSensor, motor):
         self.sensors[sensor] = motor
-        motor.setDisplay(self.display)
 
     # Registers a new motor (which controls a switch) within a sensor-motor-group
     # The precessor can either be a sensor (i. e. the motor is right behind the 
     # sensor) or another motor (i. e. the motor is behind another switch)
     def registerMotor(self, precessor : SwitchSensor, motor : SwitchMotor):
         self.sensors[precessor] = motor
-        motor.setDisplay(self.display)
 
 
-    def run(self, timeout = None):
+    def run(self):
         while Button.CENTER not in self.hub.buttons.pressed():
             self.tick()
             wait(self.dt)
-        self.color(Color.YELLOW)
+        self.color(Color.BLUE)
         self.reset()
         self.hub.system.shutdown()
 
@@ -290,14 +233,13 @@ class SwitchController():
         # update status light
         if max_timeout <= 0:
             self.color(Color.GREEN)
-        elif max_timeout >= init_timeout - 1:
-            self.color(Color.RED)
-        else:
+        elif any([timeout == init for timeout, init in zip(timeouts, init_timeouts)]): # todo improve
             self.color(Color.ORANGE)
+        else:
+            self.color(Color.YELLOW)
 
         # update status light matrix
         if self.hub != None:
-            self.display.update(timeouts, init_timeouts)
 
     def reset(self):
         for sensor in self.sensors:
@@ -312,10 +254,15 @@ class SwitchController():
             self.hub.system.set_stop_button(None)
         self.color(Color.GREEN)
 
-hub = PrimeHub()
+hub = TechnicHub()
 controller = SwitchController(hub)
 
-# model your switch layout here
+# configure your switch layout here
+motor1 = SwitchMotor(Port.B, probability_curved_to_straigth=0.5, probability_straigth_to_curved=0.8)
+motor2 = SwitchMotor(Port.B, probability_curved_to_straigth=0.5, probability_straigth_to_curved=0.8)
+motor1.registerSuccessor(motor1, SwitchPosition.STRAIGTH)
+
+controller.registerSensor(sensor, motor)
 
 # start the switch controller
 controller.run()
