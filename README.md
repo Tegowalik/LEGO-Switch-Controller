@@ -18,10 +18,12 @@ For controlling the switches, you can use any type of motor with rotation sensor
 These motors occur in motorized LEGO Technic Sets (like Liebherr R 9800 Excavator (42100), App-Controlled Cat® D11 Bulldozer (42131)) and in LEGO MINDSTORMS/ SPIKE sets (like Robot Inventor (51515), SPIKE Prime Set (45678)). 
 
 As sensor any sensor which can determine a distance is possible. The pictures are again taken from the (PyBricks Documentation](https://docs.pybricks.com/en/latest/pupdevices/index.html).
+
 | Sensor | Color & Distance Sensor | Infrared/ Motion Sensor | Ultrasonic Sensor | Color Sensor |
+|-|-|-|-|-|
 | LEGO item/ part number | item 88007 | item 20844 | part 37316c01 | part 37308c01 |
 | LEGO sets with this sensor | BOOST Creative Toolbox (17101), Droid Commander (75253), [sold as single item at LEGO store](https://www.lego.com/en-us/product/color-distance-sensor-88007) |  Grand Piano (21323), WeDo 2.0 Core Set (45300) | Robot Inventor (51515), SPIKE Prime Set (45678) | Robot Inventor (51515), SPIKE Essential Set (45345), SPIKE Prime Expansion Set (45681), SPIKE Prime Set (45678) |
-| Picture | <img src="img/ColorDistanceSensor.png" width="250"> | <img src="img/InfraredSensor.png" width="250"> | <img src="img/UltrasonicSensor.png" width="250"> | <img src="img/ColorSensor.png" width="250"> |
+| Picture | <img src="img/ColorDistanceSensor.png" width="200"> | <img src="img/InfraredSensor.png" width="200"> | <img src="img/UltrasonicSensor.png" width="200"> | <img src="img/ColorSensor.png" width="200"> |
 
 Since all sensors except the Color & Distance Sensor is used only in MINDSTORMS/ SPIKE sets (which are EOL 2022), this sensor seems to be the most suitable - also because it is sold individually by LEGO and is relatively cheap.
 
