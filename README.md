@@ -21,23 +21,24 @@ As sensor any sensor which can determine a distance is possible. The pictures ar
 
 | **Sensor** | **Color & Distance Sensor** | **Infrared/ Motion Sensor** | **Ultrasonic Sensor** | **Color Sensor** |
 |-|-|-|-|-|
-| LEGO item/ part number | item 88007 | item 20844 | part 37316c01 | part 37308c01 |
-| LEGO sets with this sensor | BOOST Creative Toolbox (17101), Droid Commander (75253), [sold as single item at LEGO store](https://www.lego.com/en-us/product/color-distance-sensor-88007) |  Grand Piano (21323), WeDo 2.0 Core Set (45300) | Robot Inventor (51515), SPIKE Prime Set (45678) | Robot Inventor (51515), SPIKE Essential Set (45345), SPIKE Prime Expansion Set (45681), SPIKE Prime Set (45678) |
-| Picture | <img src="img/ColorDistanceSensor.png" width="200"> | <img src="img/InfraredSensor.png" width="200"> | <img src="img/UltrasonicSensor.png" width="200"> | <img src="img/ColorSensor.png" width="200"> |
+| **Python Class name** | `SwitchDistanceSensor` | `SwitchIRSensor` | `SwitchUltrasonicSensor` | `SwitchColorSensor` | 
+| **LEGO item/ part number** | item 88007 | item 20844 | part 37316c01 | part 37308c01 |
+| **LEGO sets with this sensor** | BOOST Creative Toolbox (17101), Droid Commander (75253), [sold as single item at LEGO store](https://www.lego.com/en-us/product/color-distance-sensor-88007) |  Grand Piano (21323), WeDo 2.0 Core Set (45300) | Robot Inventor (51515), SPIKE Prime Set (45678) | Robot Inventor (51515), SPIKE Essential Set (45345), SPIKE Prime Expansion Set (45681), SPIKE Prime Set (45678) |
+| **Picture** | <img src="img/ColorDistanceSensor.png" width="200"> | <img src="img/InfraredSensor.png" width="200"> | <img src="img/UltrasonicSensor.png" width="200"> | <img src="img/ColorSensor.png" width="200"> |
 
 Since all sensors except the Color & Distance Sensor is used only in MINDSTORMS/ SPIKE sets (which are EOL 2022), this sensor seems to be the most suitable - also because it is sold individually by LEGO and is relatively cheap.
 
 Once you have organized the hub, motor(s) and sensor(s), you are ready to run the program. Therefore you need a hub dependant *code basis* and a switch layout dependant *configuration part*
 
-### Code Basis
+### Powered Up Code Basis
 | City Hub | [CityHub.py](CityHub.py) |
 |-|-|
 | Technic Hub | [TechnicHub.py](TechnicHub.py) |
 
-### Configuration Part
+### Powered Up Configuration Part
 Depending on your actual switch layout, you need to add a few lines to the program right below the line `# configure your switch layout here`.
 
-The following examples should cover the most important switch-sensor-motor-combinations. You might need to make little changes (like changing the used sensor type, port or parameter values).
+The following examples should cover the most important switch-sensor-motor-combinations. You might need to make little changes (like changing the used sensor type, port or parameter values). The provided *Easy Code* is a minimal working code example for the given setup. The *Advanced Code* shows which parameters can be used to modify the behaviour.
 
 <table>
 <tr>
@@ -60,6 +61,8 @@ controller.registerSensor(sensor, motor)
 ```python
 # create a SwitchDistanceSensor with higher critical distance (60) 
 # instead of the default value 40 
+# -> sensor will trigger if object is in front with distance 
+# less than 40 (no unit; value means proportion of reflected light)
 # -> sensor can be placed further away from the tracks
   
 sensor = SwitchDistanceSensor(Port.A, criticalDistance=60)
@@ -128,6 +131,13 @@ controller.registerSensor(sensor, motor)
 
 ```python  
 sensor = SwitchDistanceSensor(Port.A, criticalDistance=30)
+# Set the initial timeout value to 20 (default=40).
+# Note that the init_timeout depends on the dt-value 
+# (time in ms between two ticks) of the SwitchController.
+# The default dt-value of 50ms combined with init_timeout of 20 
+# means that after 20 * 50ms = 1s without sensor detection 
+# a train is considered to be passed completely.
+sensor.set_init_timeout(20)
 
 motor1 = SwitchMotor(Port.B, switchposition=SwitchPosition.CURVED)
 motor2 = SwitchMotor(Port.C, 
@@ -144,26 +154,46 @@ controller.registerSensor(sensor, motor)
 
   </td>
 </tr>
+    <tr>
+<td> 1 Sensor + 3 Motors </td>
+  <td>TODO</td>
+<td>
+
+```python
+sensor1 = SwitchIRSensor(Port.A)
+sensor2 = SwitchUltrasonicSensor(Port.C)
+  
+motor1 = SwitchMotor(Port.B)
+motor2 = SwitchMotor(Port.D)
+  
+controller.registerSensor(sensor1, motor1)
+controller.registerSensor(sensor2, motor2)
+```
+
+  </td><td>
+
+```python  
+sensor1 = SwitchIR(Port.A, criticalDistance=30)
+sensor2 = SwitchUltrasonicSensor(Port.A, criticalDistance=400)
+sensor2.set_init_timeout(600)
+
+motor1 = SwitchMotor(Port.B, 
+                     switchposition=SwitchPosition.CURVED,
+                     probability_straigth_to_curved=1.0, 
+                     probability_curved_to_straigth=1.0,)
+motor2 = SwitchMotor(Port.C, 
+                    switchPosition=SwitchPosition.STRAIGHT,
+                    probability_straigth_to_curved=0.8)
+  
+controller.registerSensor(sensor1, motor2)
+controller.registerSensor(sensor2, motor2)
+```
+
+  </td>
+</tr>
 </table>
 
-
-### City Hub
-Since the [City Hub](https://www.lego.com/en-us/product/hub-88009) (the hub used for the City trains) has only two ports, the only possible configuraiton consists of  
-
-
-
-In order to use a different sensor instead, you would need to change a few lines of the program: 
-- For 1 sensor + 1 switch: replace any occurence in the program of *ColorDistanceSensor* by the name of your device (like *InfraredSensor*, *ColorSensor* or *UltrasonicSensor*)
-- For all other programs: Use the corresponding SwitchSensor implementation, i.e. *SwitchDistanceSensor* (used in the program), *SwitchIRSensor*, *SwitchUltrasonicSensor* or *SwitchColorSensor* 
-
-|Description | Image | Programs |
-|-|-|-|-|
-|1 Sensor + 1 Switch | TODO with Ports | [CityHub](powered_up_switch_1_City_Hub.py), [TechnicHub](powered_up_switch_1_Technic_Hub.py) |
-|1 Sensor + 2 Switchs | | |
-|1 Sensor + 3 Switches | | |
-|2 Sensors + 2 Switches | | | 
-
-Note that the structure of the 1 sensor + 1 switch program differs completely compared to the other programs which are using a common code basis with object oriented programming. Actually the 1 sensor + 1 switch functionality can be easily achieved using the object oriented approach as well (the object oriented code basis is much more powerful, flexible and complicated). But the provided programs for 1 sensor + 1 switch are much easier to understand than the object oriented ones, so use whatever fits your needs best.
+Note that for the [City Hub](https://www.lego.com/en-us/product/hub-88009) (the hub used for the City trains), only the first example can be used since only two ports are available. In particular, another special program is available for this case which is easier to understand (esspecially if you are not familiar with object oriented programming): [CityHub_easy.py](CityHub_easy.py).
 
 Personally, I recommend to first running the program without including the current program to the firmware. So you can easily experiment different settings and see what fits your purposes best (errors can be seen in the terminal). Once the program is ready flash the hub with including the current program to the firmware (Currently this option is available under "Settings" -> "Firmware" -> "Include current program"). This causes that flashed program is executed whenever the hub is started in the future - unless you reflash it again. You can easily reflash the original LEGO firmware by connecting the hub to the powered up app. The disadvantage of the flashing the program to the firmware is that you can no longer see the terminal output, so make sure that the program runs without errors before doing this.
 
@@ -175,13 +205,64 @@ Personally, I recommend to first running the program without including the curre
   - Green: otherwise (sensor is waiting for an incoming train)
   - In case of the multiple sensor programs, the first color in the list is shown whose condition is true for at least one sensor
 - **Power Off**: Use the green button of the hub to power the controller off. This might cause resetting the switches to the initial state.
+- **Probabilities** TODO
+- **Motor Auto Calibration** TODO (also add code)
+- **Critical Distances** TODO
 
 
-## MINDSTORMS (Robot Inventor 51515, Spike Prime 45678)
-Currently only a 1 sensor + 1 switch design is [available](51515_switch_1_1.lms). You can run it by using the official LEGO Mindstorms Software with Python Programming.
+## MINDSTORMS (Robot Inventor 51515, SPIKE Prime 45678)
+The [PyBricks](https://pybricks.com/) code for these hubs works similar to the ones using the Powered Up Hubs. You just need to use the special code basis: [MINDSTORMS_51515.py](MINDSTORMS_51515.py). (I haven't tested it for the SPIKE Prime, but according to the PyBricks documentation, the code should work as well).
+Using this code basis, all [Powered Up Configuration Examples](#Powered_Up_Configuration_Part) can also be used for the MINDSTORMS Hubs. But because of the additional available ports, even more (complex) configurations become possible:
+
+
+<table>
+<tr>
+  <td>Description </td> <td>Picture </td> <td>Easy Code </td> <td>Advanced Code</td>
+</tr>
+<tr>
+  <td>2 Sensor + 3 Switch </td> <td>TODO</td>
+<td>
+
+```python
+sensor = SwitchDistanceSensor(Port.A)
+  
+motor = SwitchMotor(Port.B)
+  
+controller.registerSensor(sensor, motor)
+```
+
+  </td><td>
+
+```python
+# create a SwitchDistanceSensor with higher critical distance (60) 
+# instead of the default value 40 
+# -> sensor will trigger if object is in front with distance 
+# less than 40 (no unit; value means proportion of reflected light)
+# -> sensor can be placed further away from the tracks
+  
+sensor = SwitchDistanceSensor(Port.A, criticalDistance=60)
+# probability_straigth_to_curved > probability_curved_to_straigth 
+# means that the switch will be more often in the curved state 
+# than in the straight one
+motor = SwitchMotor(Port.B, 
+                    probability_curved_to_straigth=0.5, 
+                    probability_straigth_to_curved=0.8,
+                    switchPosition=SwitchPosition.STRAIGHT)
+  
+controller.registerSensor(sensor, motor)
+```
+
+  </td>
+</tr>
+ TODO 2 sensor, 4 motor
+  TODO 3 sensor, 3 motor
+</table>
+
+
+In case you don't want to flash your MINDSTORMS with PyBricks firmware, you can still use a version for the official LEGO Mindstorms Software with Python Programming: [MINDSTORMS_51515.lms](MINDSTORMS_51515.lms)/ [MINDSTORMS_51515_LEGO_python.py](MINDSTORMS_51515_LEGO_python.py). However, because of the very limited functionality of the programming language, only a 1 Switch + 1 Motor layout is provided (with less modification possibilities compared to the PyBricks version). 
 
 ### Special Features
-Additionally to the Powered Up Hub Speical Features the light matrix is used to indicate the progress of the sensor timeout. 
+Additionally to the Powered Up Hub Speical Features the light matrix is used to indicate the progress of the sensor timeout. Depending on the number of sensors the color matrix shows progress bar(s) indicating the timeout progress.
 
 TODO add gifs
 
@@ -194,13 +275,10 @@ To run python programs on an EV3, you first need to follow these [instructions](
 |1 Sensor + 2 XL Motors | TODO| [program](ev3_switch_2_XL_XL.py)|
 |2 Sensors + 2 XL Motors + 1 M Motor | TODO| [program](ev3_switch_2_1_XL_M_XL.py)|
 
-Of course not all possible combinations of sensors and motors are provided. However the basic idea how to adjust the code for a certain sensor-motor-layout should be obvious. Also note that the probabilities to turn the switch are not programmed that detailed as in the previous programs.
+Of course not all possible combinations of sensors and motors are provided. In addition the programs aren't that flexible as the PyBricks ones. However the basic idea how to adjust the code for a certain sensor-motor-layout should be obvious.
 
-
-# TODO common variables that might need to be adjusted 
-
-
-# Known Issues
+## Known Issues
 - The variable/ method naming in the python files mixes CamelCasing and snake_casing. As a programmer, I really regret that I haven't been consistently using a case system. However I don't have neither the time nor the motivation to make the naming consistent.
+- As soon as communication between hubs is possible, this makes a lot of new features possible (large chained layouts are possible -> no limitation due to limited available ports). Furthermore, it would be awesome if PyBricks Hubs could connect to a app which supervises *all* hubs.
 
 If you find any unexpected behaviour or have a feature request, please create an issue or a pull request.
