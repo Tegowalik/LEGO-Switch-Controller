@@ -39,34 +39,31 @@ Depending on your actual switch layout, you need to add a few lines to the progr
 
 The following examples should cover the most important switch-sensor-motor-combinations. You might need to make little changes (like changing the used sensor type, port or parameter values).
 
-| Description | Picture | Code |
-|-|-|-|
-| 1 Sensor + 1 Switch | | 
-```python
-# test
-```
-|
-| 1 Sensor + 2 Switches | | 
-```python 
-# another test
-```
-|
-
 <table>
 <tr>
-  <td> Description </td> <td> Picture </td> <td> Code </td>
+  <td>Description </td> <td>Picture </td> <td>Easy Code </td> <td>Advanced Code</td>
 </tr>
 <tr>
-  <td> 1 Sensor + 1 Switch </td> <td>TODO</td>
+  <td>1 Sensor + 1 Switch </td> <td>TODO</td>
 <td>
 
 ```python
-motor = SwitchMotor(Port.A)
-sensor = SwitchDistanceSensor(Port.B)
+sensor = SwitchDistanceSensor(Port.A)
+motor = SwitchMotor(Port.B)
 controller.registerSensor(sensor, motor)
 ```
 
-</td>
+  </td><td>
+
+```python
+# create a SwitchDistanceSensor with higher critical distance (60) instead of the default value 40 -> sensor can be placed further away from the tracks
+sensor = SwitchDistanceSensor(Port.A, criticalDistance=60)
+# probability_straigth_to_curved > probability_curved_to_straigth means that the switch will be more often in the curved state than in the straight one
+motor = SwitchMotor(Port.B, probability_curved_to_straigth=0.5, probability_straigth_to_curved=0.8)
+controller.registerSensor(sensor, motor)
+```
+
+  </td>
 </tr>
 <tr>
 <td> 400 </td>
