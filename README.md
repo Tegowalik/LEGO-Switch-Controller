@@ -21,14 +21,14 @@ As sensor any sensor which can determine a distance is possible. The pictures ar
 
 | **Sensor** | **Color & Distance Sensor** | **Infrared/ Motion Sensor** | **Ultrasonic Sensor** | **Color Sensor** |
 |-|-|-|-|-|
-| **Python Class name** | `SwitchDistanceSensor` | `SwitchIRSensor` | `SwitchUltrasonicSensor` | `SwitchColorSensor` | 
-| **LEGO item/ part number** | item 88007 | item 20844 | part 37316c01 | part 37308c01 |
-| **LEGO sets with this sensor** | BOOST Creative Toolbox (17101), Droid Commander (75253), [sold as single item at LEGO store](https://www.lego.com/en-us/product/color-distance-sensor-88007) |  Grand Piano (21323), WeDo 2.0 Core Set (45300) | Robot Inventor (51515), SPIKE Prime Set (45678) | Robot Inventor (51515), SPIKE Essential Set (45345), SPIKE Prime Expansion Set (45681), SPIKE Prime Set (45678) |
+| **Python Class Name** | `SwitchDistanceSensor` | `SwitchIRSensor` | `SwitchUltrasonicSensor` | `SwitchColorSensor` | 
+| **LEGO Item/ Part Number** | item 88007 | item 20844 | part 37316c01 | part 37308c01 |
+| **LEGO Sets with this Sensor** | BOOST Creative Toolbox (17101), Droid Commander (75253), [sold as single item at LEGO store](https://www.lego.com/en-us/product/color-distance-sensor-88007) |  Grand Piano (21323), WeDo 2.0 Core Set (45300) | Robot Inventor (51515), SPIKE Prime Set (45678) | Robot Inventor (51515), SPIKE Essential Set (45345), SPIKE Prime Expansion Set (45681), SPIKE Prime Set (45678) |
 | **Picture** | <img src="img/ColorDistanceSensor.png" width="200"> | <img src="img/InfraredSensor.png" width="200"> | <img src="img/UltrasonicSensor.png" width="200"> | <img src="img/ColorSensor.png" width="200"> |
 
-Since all sensors except the Color & Distance Sensor is used only in MINDSTORMS/ SPIKE sets (which are EOL 2022), this sensor seems to be the most suitable - also because it is sold individually by LEGO and is relatively cheap.
+Since all sensors except the Color & Distance Sensor are used only in MINDSTORMS/ SPIKE sets (which are EOL 2022), the Color & Distance Sensor seems to be the most suitable - also because it is sold individually by LEGO and is relatively cheap.
 
-Once you have organized the hub, motor(s) and sensor(s), you are ready to run the program. Therefore you need a hub dependant *code basis* and a switch layout dependant *configuration part*
+Once you have organized the hub, motor(s) and sensor(s), you are ready to run the program. Therefore you need a hub dependant *code basis* and a switch layout dependant *configuration part*.
 
 ### Powered Up Code Basis
 | City Hub | [CityHub.py](CityHub.py) |
@@ -50,9 +50,7 @@ The following examples should cover the most important switch-sensor-motor-combi
 
 ```python
 sensor = SwitchDistanceSensor(Port.A)
-  
 motor = SwitchMotor(Port.B)
-  
 controller.registerSensor(sensor, motor)
 ```
 
@@ -198,15 +196,28 @@ Note that for the [City Hub](https://www.lego.com/en-us/product/hub-88009) (the 
 Personally, I recommend to first running the program without including the current program to the firmware. So you can easily experiment different settings and see what fits your purposes best (errors can be seen in the terminal). Once the program is ready flash the hub with including the current program to the firmware (Currently this option is available under "Settings" -> "Firmware" -> "Include current program"). This causes that flashed program is executed whenever the hub is started in the future - unless you reflash it again. You can easily reflash the original LEGO firmware by connecting the hub to the powered up app. The disadvantage of the flashing the program to the firmware is that you can no longer see the terminal output, so make sure that the program runs without errors before doing this.
 
 ### Special Features
-- **Colors**
-  - RED: Switch is currently moving the direction. No train should now be passing the switch!
-  - Orange: Currently a switch is detected in front of the sensor
-  - Yellow: Currently no train is in front of the sensor, but was a short time ago (so either the transition of two wagons is in front of the sensor or the train passed completely the sensor)
-  - Green: otherwise (sensor is waiting for an incoming train)
-  - In case of the multiple sensor programs, the first color in the list is shown whose condition is true for at least one sensor
+- **Colors**:
+  - `RED`: Switch is currently moving the direction. No train should now be passing the switch!
+  - `ORANGE`: Currently a switch is detected in front of the sensor
+  - `YELLOW`: Currently no train is in front of the sensor, but was a short time ago (so either the transition of two wagons is in front of the sensor or the train passed completely the sensor)
+  - `GREEN`: otherwise (sensor is waiting for an incoming train)
+  - In case of a program with multiple sensors, the first color in the list is shown whose condition is true for at least one sensor
 - **Power Off**: Use the green button of the hub to power the controller off. This might cause resetting the switches to the initial state.
 - **Probabilities**: The constructor `SwitchMotor` has the optional parameters `probability_straigth_to_curved` and `probability_curved_to_straigth` (default value `0.5` each). The default configuration means, that the motor moves on average after every second train. Setting both parameter to `1.0` means that the motor moves at every train. Setting `probability_straigth_to_curved < probability_curved_to_straigth` means that the motor is more often in the *straight* position.
-- **Motor Auto Calibration** TODO (also add code)
+```python
+  motor = SwitchMotor(Port.B, probability_straigth_to_curved = 0.5, probability_curved_to_straigth = 0.5)
+```
+- **Motor Auto Calibration**: Of course the `SwitchMotor` needs to know what motor positions correspond to which `SwitchPosition` (either `STRAIGHT` or `CURVED`). This is achieved by 
+  - the parameter `switchPosition` in it's constructor which states the initial `SwitchPosition` (default is `STRAIGHT`)
+  - Example:
+  ```python
+    motor = SwitchMotor(Port.B, switchPosition=SwitchPosition.CURVED)
+  ```
+  - an information how much the motor needs to move to get to the other position. This can be achieved by the parameter `turn_degrees` which is equal to the degrees from the initial position to the other. However it is really complicated to figure out the right number (depends obviously on the gear ratio, ...). If `turn_degrees` is None (as it is by default), an auto calibration is done i.e. the motor moves left and right until the motor stalls. Make sure that the motor is connected to the switch otherwise it would move forever!
+  - Example :
+  ```python
+    motor = SwitchMotor(Port.B, turn_degrees=100)
+  ```
 - **Critical Distances** TODO
 - **Rising/ Falling Edge** TODO
 
