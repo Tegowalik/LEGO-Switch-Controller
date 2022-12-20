@@ -105,13 +105,18 @@ Personally, I recommend to first running the program without including the curre
   - RED: Switch is currently moving the direction. No train should now be passing the switch!
   - Orange: Currently a switch is detected in front of the sensor
   - Yellow: Currently no train is in front of the sensor, but was a short time ago (so either the transition of two wagons is in front of the sensor or the train passed completely the sensor)
-  - Green: otherwise
-  - In case of the two sensor program, the first color in the list is shown whose condition is true for at least one sensor
+  - Green: otherwise (sensor is waiting for an incoming train)
+  - In case of the multiple sensor programs, the first color in the list is shown whose condition is true for at least one sensor
 - **Power Off**: Use the green button of the hub to power the controller off. This might cause resetting the switches to the initial state.
 
 
 ## MINDSTORMS (Robot Inventor 51515, Spike Prime 45678)
 Currently only a 1 sensor + 1 switch design is [available](51515_switch_1_1.lms). You can run it by using the official LEGO Mindstorms Software with Python Programming.
+
+### Special Features
+Additionally to the Powered Up Hub Speical Features the light matrix is used to indicate the progress of the sensor timeout. 
+
+TODO add gifs
 
 ## MINDSTORMS EV3 (31313)
 To run python programs on an EV3, you first need to follow these [instructions](https://pybricks.com/install/mindstorms-ev3/installation/). After that you can use the following programs:
