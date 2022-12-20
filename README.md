@@ -54,27 +54,6 @@ motor = SwitchMotor(Port.B)
 controller.registerSensor(sensor, motor)
 ```
 
-  </td><td>
-
-```python
-# create a SwitchDistanceSensor with higher critical distance (60) 
-# instead of the default value 40 
-# -> sensor will trigger if object is in front with distance 
-# less than 40 (no unit; value means proportion of reflected light)
-# -> sensor can be placed further away from the tracks
-  
-sensor = SwitchDistanceSensor(Port.A, criticalDistance=60)
-# probability_straigth_to_curved > probability_curved_to_straigth 
-# means that the switch will be more often in the curved state 
-# than in the straight one
-motor = SwitchMotor(Port.B, 
-                    probability_curved_to_straigth=0.5, 
-                    probability_straigth_to_curved=0.8,
-                    switchPosition=SwitchPosition.STRAIGHT)
-  
-controller.registerSensor(sensor, motor)
-```
-
   </td>
 </tr>
 <tr>
@@ -84,25 +63,9 @@ controller.registerSensor(sensor, motor)
 
 ```python
 sensor = SwitchDistanceSensor(Port.A)
-  
 motor1 = SwitchMotor(Port.B)
 motor2 = SwitchMotor(Port.C)
 motor1.registerSuccessor(motor2, SwitchPosition.CURVED)
-  
-controller.registerSensor(sensor, motor)
-```
-
-  </td><td>
-
-```python  
-sensor = SwitchDistanceSensor(Port.A, criticalDistance=60)
-
-motor1 = SwitchMotor(Port.B, switchposition=SwitchPosition.CURVED)
-motor2 = SwitchMotor(Port.C, 
-                    probability_curved_to_straigth=0.5, 
-                    probability_straigth_to_curved=0.8)
-motor1.registerSuccessor(motor2, SwitchPosition.CURVED)
-  
 controller.registerSensor(sensor, motor)
 ```
 
@@ -115,38 +78,11 @@ controller.registerSensor(sensor, motor)
 
 ```python
 sensor = SwitchDistanceSensor(Port.A)
-  
 motor1 = SwitchMotor(Port.B)
 motor2 = SwitchMotor(Port.C)
 motor3 = SwitchMotor(Port.D)
 motor1.registerSuccessor(motor2, SwitchPosition.CURVED)
 motor1.registerSuccessor(motor3, SwitchPosition.STRAIGHT)
-  
-controller.registerSensor(sensor, motor)
-```
-
-  </td><td>
-
-```python  
-sensor = SwitchDistanceSensor(Port.A, criticalDistance=30)
-# Set the initial timeout value to 20 (default=40).
-# Note that the init_timeout depends on the dt-value 
-# (time in ms between two ticks) of the SwitchController.
-# The default dt-value of 50ms combined with init_timeout of 20 
-# means that after 20 * 50ms = 1s without sensor detection 
-# a train is considered to be passed completely.
-sensor.set_init_timeout(20)
-
-motor1 = SwitchMotor(Port.B, switchposition=SwitchPosition.CURVED)
-motor2 = SwitchMotor(Port.C, 
-                    probability_straigth_to_curved=0.8)
-motor3 = SwitchMotor(Port.D, 
-                     probability_straigth_to_curved=1.0, 
-                     probability_curved_to_straigth=1.0,
-                     switchPosition=SwitchPosition.CURVED)
-motor1.registerSuccessor(motor2, SwitchPosition.CURVED)
-motor1.registerSuccessor(motor3, SwitchPosition.STRAIGHT)
-  
 controller.registerSensor(sensor, motor)
 ```
 
@@ -160,30 +96,9 @@ controller.registerSensor(sensor, motor)
 ```python
 sensor1 = SwitchIRSensor(Port.A)
 sensor2 = SwitchUltrasonicSensor(Port.C)
-  
 motor1 = SwitchMotor(Port.B)
 motor2 = SwitchMotor(Port.D)
-  
 controller.registerSensor(sensor1, motor1)
-controller.registerSensor(sensor2, motor2)
-```
-
-  </td><td>
-
-```python  
-sensor1 = SwitchIR(Port.A, criticalDistance=30)
-sensor2 = SwitchUltrasonicSensor(Port.A, criticalDistance=400)
-sensor2.set_init_timeout(600)
-
-motor1 = SwitchMotor(Port.B, 
-                     switchposition=SwitchPosition.CURVED,
-                     probability_straigth_to_curved=1.0, 
-                     probability_curved_to_straigth=1.0,)
-motor2 = SwitchMotor(Port.C, 
-                    switchPosition=SwitchPosition.STRAIGHT,
-                    probability_straigth_to_curved=0.8)
-  
-controller.registerSensor(sensor1, motor2)
 controller.registerSensor(sensor2, motor2)
 ```
 
@@ -209,18 +124,22 @@ Personally, I recommend to first running the program without including the curre
 ```
 - **Motor Auto Calibration**: Of course the `SwitchMotor` needs to know what motor positions correspond to which `SwitchPosition` (either `STRAIGHT` or `CURVED`). This is achieved by 
   - the parameter `switchPosition` in it's constructor which states the initial `SwitchPosition` (default is `STRAIGHT`)
-  - Example:
   ```python
     motor = SwitchMotor(Port.B, switchPosition=SwitchPosition.CURVED)
   ```
   - an information how much the motor needs to move to get to the other position. This can be achieved by the parameter `turn_degrees` which is equal to the degrees from the initial position to the other. However it is really complicated to figure out the right number (depends obviously on the gear ratio, ...). If `turn_degrees` is None (as it is by default), an auto calibration is done i.e. the motor moves left and right until the motor stalls. Make sure that the motor is connected to the switch otherwise it would move forever!
-  - Example :
   ```python
     motor = SwitchMotor(Port.B, turn_degrees=100)
   ```
-- **Critical Distances** TODO
-- **Rising/ Falling Edge** TODO
-
+- **Distance Sensors**: As described above multiple distance sensors are supported: `SwitchDistanceSensor`, `SwitchIRSensor`, `SwitchUltrasonicSensor`, `SwitchColorSensor`. All sensors have a parameter `criticalDistance` which refers to the distance from which the sensor should be triggered (detect a train). A larger `criticalDistance` means that also objects further away are recognized. Default values are given for each sensor type, but the perfect value for you might depend on the sensors's positioning and the lightning conditions. 
+ ```python
+  sensor = SwitchDistanceSensor(Port.A, criticalDistance=50) # critical distance in %
+  sensor = SwitchIRSensor(Port.B, criticalDistance=80) # critical distance in %
+  sensor = SwitchUltrasonicSensor(Port.C, criticalDistance=400) # critica distance in mm
+  sensor = SwitchColorSensor(Port.D, criticalDistance=70) # critical distance in %
+ ```
+ - **Timeout**: Since the sensor usually does not trigger for the whole time a train is passing by (e.g. between two train trailers), a timeout is used to skip those gaps. Additionally, the timeout is needed if the motor moves *after* a train has passed. In that case the train still needs some time to pass the (last) switch (distance from sensor to the last switch). The length of the `timeout` can be set by using `sensor.set_init_timeout(40)` where 40 is the timeout value (also the default value). Note that the meaning of the timeout value depends on the `dt`-value (time in ms between two ticks) of the SwitchController. The default `dt`-value of 50ms combined with an timeout of 40 means that after 40 * 50ms = 2s without sensor triggering a train is considered to be passed completely.
+- **Rising/ Falling Edge** Two options when the switch moves are provided: The motor moves right when an incoming train is detected (`SwitchMode.RISING_EDGE`) or after a train has passed the sensor (and switch) completely (`SwitchMode.FALLING_EDGE`). The option can be set by using `sensor.set_switch_mode(SwitchMode.RISING_EDGE)`. However, I can only recommend using `SwitchMode.FALLING_EDGE` (default value) since the powered up motors seem to be too weak/ slow (the moving of the motor takes too long). Unless the distance between the sensor and the switch isn't far and/ or the trains are driving slow, the rising edge mode didn't work for me with powered up motors. By the way the MINDSTORMS EV3 motors work with the rising edge mode.
 
 ## MINDSTORMS (Robot Inventor 51515, SPIKE Prime 45678)
 The [PyBricks](https://pybricks.com/) code for these hubs works similar to the ones using the Powered Up Hubs. You just need to use the special code basis: [MINDSTORMS_51515.py](MINDSTORMS_51515.py). (I haven't tested it for the SPIKE Prime, but according to the PyBricks documentation, the code should work as well).
