@@ -31,11 +31,29 @@ Once you have organized the hub, motor(s) and sensor(s), you are ready to run th
 
 ### Code Basis
 | City Hub | [CityHub.py](CityHub.py) |
+|-|-|
 | Technic Hub | [TechnicHub.py](TechnicHub.py) |
 
 ### Configuration Part
 Depending on your actual switch layout, you need to add a few lines to the program right below the line
-  # configure your switch layout here
+
+    # configure your switch layout here
+    
+The following examples should cover the most important switch-sensor-motor-combinations. You might need to make little changes (like changing the used sensor type or port).
+
+| Description | Picture | Code |
+|-|-|-|
+| 1 Sensor + 1 Switch | | 
+
+    # test
+    
+|
+| 1 Sensor + 2 Switches | | 
+
+    # another test
+    
+|
+
 
 ### City Hub
 Since the [City Hub](https://www.lego.com/en-us/product/hub-88009) (the hub used for the City trains) has only two ports, the only possible configuraiton consists of  
