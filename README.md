@@ -8,20 +8,20 @@ In principle, all the programs work in the same way: Trains are detected by an d
 Most of the provided programs are running [PyBricks](https://pybricks.com/) code. However, for LEGO MINDSTORMs EV3 (31313) [EV3 MicroPython](https://pybricks.com/ev3-micropython/) is used. The LEGO MINDSTORMS Robot Inventor (51515) can be used either with PyBricks or with the official [LEGO MINDSTORMS Software with Python Programming](https://lego.github.io/MINDSTORMS-Robot-Inventor-hub-API/).
 
 To get the motor rotation change the direction of the switch, a design of [SteinaufStein](https://www.youtube.com/channel/UCJ-c1vQHVZZ6S6xhjjNo7Gg) is used ([video tutorial](https://youtu.be/Jwv6kI0IBoQ?t=63)). Note that for some motors (like most of the powered up motors) an additional gear ration is needed since the motors are too weak to move. 
-![](img/switch_gear_ratio.jpg)
+![](img/switch_gear_ratio.jpg=300x)
 
 ## Powered Up Hubs
 All the programs for powered up hubs are running [PyBricks](https://pybricks.com/) code. The following description uses some PyBricks specific terms, so read their [documentation](https://docs.pybricks.com/en/stable/) to understand details. Also refer to [here](https://code.pybricks.com/) in order to actually run the provided python code on your powered up hubs.
 
 For controlling the switches, you can use any type of motor with rotation sensor being compatible with the powered up system. The following picture from the (PyBricks Documentation](https://docs.pybricks.com/en/latest/pupdevices/index.html) shows the compatible motors.
-[!image](img/motors.png)
+![image](img/motors.png =500x)
 These motors occur in motorized LEGO Technic Sets (like Liebherr R 9800 Excavator (42100), App-Controlled Cat® D11 Bulldozer (42131)) and in LEGO MINDSTORMS/ SPIKE sets (like Robot Inventor (51515), SPIKE Prime Set (45678)). 
 
 As sensor any sensor which can determine a distance is possible. The pictures are again taken from the (PyBricks Documentation](https://docs.pybricks.com/en/latest/pupdevices/index.html).
 | Sensor | Color & Distance Sensor | Infrared/ Motion Sensor | Ultrasonic Sensor | Color Sensor |
 | LEGO item/ part number | item 88007 | item 20844 | part 37316c01 | part 37308c01 |
 | LEGO sets with this sensor | BOOST Creative Toolbox (17101), Droid Commander (75253), [sold as single item at LEGO store](https://www.lego.com/en-us/product/color-distance-sensor-88007) |  Grand Piano (21323), WeDo 2.0 Core Set (45300) | Robot Inventor (51515), SPIKE Prime Set (45678) | Robot Inventor (51515), SPIKE Essential Set (45345), SPIKE Prime Expansion Set (45681), SPIKE Prime Set (45678) |
-| Picture | [!image](png/ColorDistanceSensor.png) | [!image](png/InfraredSensor.png) | [!image](png/UltrasonicSensor.png) | [!image](png/ColorSensor) |
+| Picture | ![](png/ColorDistanceSensor.png =200x) | ![](png/InfraredSensor.png =200x) | !![](png/UltrasonicSensor.png =200x) | ![](png/ColorSensor =200x) |
 
 Since all sensors except the Color & Distance Sensor is used only in MINDSTORMS/ SPIKE sets (which are EOL 2022), this sensor seems to be the most suitable - also because it is sold individually by LEGO and is relatively cheap.
 
