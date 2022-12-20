@@ -52,6 +52,41 @@ The following examples should cover the most important switch-sensor-motor-combi
 ```
 |
 
+<table>
+<tr>
+  <td> Description </td> <td> Picture </td> <td> Code </td>
+</tr>
+<tr>
+  <td> 1 Sensor + 1 Switch </td> <td>TODO</td>
+<td>
+
+```json
+json
+{
+    "id": 10,
+    "username": "alanpartridge",
+    "email": "alan@alan.com",
+    "password_hash": "$2a$10$uhUIUmVWVnrBWx9rrDWhS.CPCWCZsyqqa8./whhfzBZydX7yvahHS",
+    "password_salt": "$2a$10$uhUIUmVWVnrBWx9rrDWhS.",
+    "created_at": "2015-02-14T20:45:26.433Z",
+    "updated_at": "2015-02-14T20:45:26.540Z"
+}
+```
+V Extra blank line below!
+
+</td>
+</tr>
+<tr>
+<td> 400 </td>
+  <td>TODO</td>
+<td>
+
+**Markdown** _here_. (Blank lines needed before and after!)
+
+</td>
+</tr>
+</table>
+
 
 ### City Hub
 Since the [City Hub](https://www.lego.com/en-us/product/hub-88009) (the hub used for the City trains) has only two ports, the only possible configuraiton consists of  
