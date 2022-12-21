@@ -1,6 +1,4 @@
 #!/usr/bin/env pybricks-micropython
-
-
 from random import randint as rdm
 from pybricks.hubs import EV3Brick
 from pybricks.ev3devices import Motor, InfraredSensor, ColorSensor
@@ -21,7 +19,7 @@ XL2IsClosed = False
 
 ev3 = EV3Brick()
 ev3.light.on(Color.ORANGE)
-wait(10000)
+wait(100)
 
 
 ir = InfraredSensor(Port.S1)
@@ -77,7 +75,6 @@ while True:
         IRCount = max(IRCount - 1, 0)
 
     color = cs.reflection()
-    print(color)
     if colorCount == 0:
         ev3.light.on(Color.GREEN)
         if colorBorder < color:
@@ -104,4 +101,4 @@ while True:
     ev3.screen.print(color)
     ev3.screen.print(colorCount)
     
-reset() 
+reset()

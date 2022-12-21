@@ -9,7 +9,7 @@ def enum(**enums):
 
 # SwitchPosition.STRAIGHT means a train would pass the switch in the straight direction
 # SwitchPosition.CURVED means a train would pass the switch in the curved direction (either left or right)
-SwitchPosition = enum(STRAIGTH=1, CURVED=2)
+SwitchPosition = enum(STRAIGHT=1, CURVED=2)
 
 # SwitchMode.RISING_EDGE means that the switch is randomly moved if an incoming train is detected in front of the sensor.
 # This mode requires that the motors can complete the moving before the train reaches switch (depends on distance of sensor and switch)
@@ -25,7 +25,7 @@ class SwitchSensor():
     def __init__(self, criticalDistance, switchMode=SwitchMode.FALLING_EDGE, init_timeout=40):
         self.criticalDistance = criticalDistance
         self.init_timeout = init_timeout
-        self.set_switch_mode(switch_mode)
+        self.set_switch_mode(switchMode)
 
 
     # The 'timeout' is used as following: the timeout is resetted (i. e. set to a
@@ -71,14 +71,13 @@ class SwitchSensor():
 
     def set_init_timeout(self, init_timeout):
         self.init_timeout = init_timeout
-        self.timeout = init_timeout
 
-    def set_switch_mode(switch_mode : SwitchMode):
+    def set_switch_mode(self, switchMode : SwitchMode):
         self.switchMode = switchMode
         if switchMode == SwitchMode.RISING_EDGE:
             self.timeout = 0
         else:
-            self.reset()
+            self.timeout = -1
 
 # a color distance sensor (LEGO item 88007)
 class SwitchDistanceSensor(SwitchSensor):
@@ -90,7 +89,7 @@ class SwitchDistanceSensor(SwitchSensor):
 # the motion/ IR sensor known from LEGO WeDo 2.0 or the Grand Piano (LEGO item 20844)
 class SwitchIRSensor(SwitchSensor):
     # critical distance in %
-    def __init__(self, port : Port, criticalDistance=20):
+    def __init__(self, port : Port, criticalDistance=60):
         super().__init__(criticalDistance)
         self.sensor = InfraredSensor(port)
 
@@ -98,14 +97,14 @@ class SwitchIRSensor(SwitchSensor):
 class SwitchUltrasonicSensor(SwitchSensor):
     
     # critical distance in mm
-    def __init__(self, port : Port, criticalDistance=200):
+    def __init__(self, port : Port, criticalDistance=120):
         super().__init__(criticalDistance)
         self.sensor = UltrasonicSensor(port)
 
 # the color sensor known from LEGO Mindstorms 51515 (LEGO part 37308c01)
 class SwitchColorSensor(SwitchSensor):
     # critical distance in %
-    def __init__(self, port : Port, criticalDistance=85):
+    def __init__(self, port : Port, criticalDistance=95):
         super().__init__(criticalDistance)
         self.sensor = ColorSensor(port)
 
@@ -124,42 +123,42 @@ class SwitchColorSensor(SwitchSensor):
 class SwitchMotor:
     def __init__(self, 
             port : Port, 
-            switchPosition=SwitchPosition.STRAIGTH, 
+            switchPosition=SwitchPosition.STRAIGHT,
             direction=Direction.CLOCKWISE,
-            probability_straigth_to_curved=0.5,
-            probability_curved_to_straigth=0.5,
-            turn_degrees=None):
-        self.probabilities = {SwitchPosition.STRAIGTH: probability_straigth_to_curved,
-                                SwitchPosition.CURVED: probability_curved_to_straigth}
+            probability_straight_to_curved=0.5,
+            probability_curved_to_straight=0.5,
+            turn_degrees=None, # ~60 if no gears are needed
+            power=750):
+        self.probabilities = {SwitchPosition.STRAIGHT: probability_straight_to_curved,
+                                SwitchPosition.CURVED: probability_curved_to_straight}
         self.switchPosition = switchPosition
         self.initialPosition = switchPosition
         self.motor = Motor(port, direction)
+        self.motor.reset_angle(0)
+        self.motor.stop()
         self.successors = {}
-        self.power = 500
+        self.power = power
         self.stop_mode = Stop.COAST
 
         if turn_degrees is None:
             self.calibrate()
         else:
-            other_switch_position = SwitchPosition.STRAIGTH if self.switchPosition == SwitchPosition.CURVED else SwitchPosition.CURVED
+            other_switch_position = SwitchPosition.STRAIGHT if self.switchPosition == SwitchPosition.CURVED else SwitchPosition.CURVED
             self.angle = {switchPosition: 0, other_switch_position: turn_degrees}
 
     def calibrate(self):
+        self.motor.reset_angle(0)
         angle1 = self.motor.run_until_stalled(self.power / 5)
         angle2 = self.motor.run_until_stalled(-self.power / 5)
 
-        # move angles a little bit towards each other to prevent motor squeaking
-        diff = angle1 - angle2
-        angle1 = int(angle1 - diff/3.0)
-        angle2 = int(angle2 + diff/3.0)
-
-        other_switch_position = SwitchPosition.STRAIGTH if self.switchPosition == SwitchPosition.CURVED else SwitchPosition.CURVED
+        other_switch_position = SwitchPosition.STRAIGHT if self.switchPosition == SwitchPosition.CURVED else SwitchPosition.CURVED
         if angle1 < -angle2:
             self.motor.run_target(self.power, angle1)
             self.angle = {self.switchPosition: angle1, other_switch_position: angle2}
         else:
             self.motor.run_target(self.power, angle2)
             self.angle = {self.switchPosition: angle2, other_switch_position: angle1}
+        self.motor.stop()
 
     def registerSuccessor(self, successor : SwitchMotor, switchPosition : SwitchPosition):
         self.successors[switchPosition] = successor
@@ -168,13 +167,12 @@ class SwitchMotor:
         return self.angle1 if self.angle == self.angle2 else self.angle2
 
     def move(self):
-        if self.switchPosition == SwitchPosition.STRAIGTH:
+        if self.switchPosition == SwitchPosition.STRAIGHT:
             self.switchPosition = SwitchPosition.CURVED
         elif self.switchPosition == SwitchPosition.CURVED:
-            self.switchPosition = SwitchPosition.STRAIGTH
+            self.switchPosition = SwitchPosition.STRAIGHT
         angle = self.angle[self.switchPosition]
         self.motor.run_target(self.power, angle, then=self.stop_mode, wait=True)      
-        self.power *= -1
 
     def moveRandom(self):
         if random() < self.probabilities[self.switchPosition]:
@@ -195,23 +193,18 @@ class SwitchMotor:
 class SwitchController():
 
     def __init__(self, hub=None, dt=50):
-        self.sensors = {}
+        self.sensors = {} # map from sensors to motors
+        self.sensorList = [] # preserves order for correct update of the LightMatrix
         self.dt = dt
         self.hub = hub
         self.initializeHub()
         
     def registerSensor(self, sensor : SwitchSensor, motor):
         self.sensors[sensor] = motor
-
-    # Registers a new motor (which controls a switch) within a sensor-motor-group
-    # The precessor can either be a sensor (i. e. the motor is right behind the 
-    # sensor) or another motor (i. e. the motor is behind another switch)
-    def registerMotor(self, precessor : SwitchSensor, motor : SwitchMotor):
-        self.sensors[precessor] = motor
-
+        self.sensorList.append(sensor)
 
     def run(self):
-        while Button.CENTER not in self.hub.buttons.pressed():
+        while Button.CENTER not in self.hub.button.pressed():
             self.tick()
             wait(self.dt)
         self.color(Color.BLUE)
@@ -225,9 +218,9 @@ class SwitchController():
                 self.color(Color.RED)
                 self.sensors[sensor].moveRandom()
         
-        timeouts = [sensor.timeout for sensor in self.sensors]
+        timeouts = [sensor.timeout for sensor in self.sensorList]
         max_timeout = max(timeouts)
-        init_timeouts = [sensor.init_timeout for sensor in self.sensors]
+        init_timeouts = [sensor.init_timeout for sensor in self.sensorList]
         init_timeout = max(init_timeouts)
         
         # update status light
@@ -238,8 +231,8 @@ class SwitchController():
         else:
             self.color(Color.YELLOW)
 
-        # update status light matrix
-        if self.hub != None:
+        
+        
 
     def reset(self):
         for sensor in self.sensors:
@@ -258,11 +251,7 @@ hub = CityHub()
 controller = SwitchController(hub)
 
 # configure your switch layout here
-motor1 = SwitchMotor(Port.B, probability_curved_to_straigth=0.5, probability_straigth_to_curved=0.8)
-motor2 = SwitchMotor(Port.B, probability_curved_to_straigth=0.5, probability_straigth_to_curved=0.8)
-motor1.registerSuccessor(motor1, SwitchPosition.STRAIGTH)
-
-controller.registerSensor(sensor, motor)
 
 # start the switch controller
 controller.run()
+

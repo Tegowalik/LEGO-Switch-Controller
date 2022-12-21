@@ -123,7 +123,7 @@ class SwitchColorSensor(SwitchSensor):
 class SwitchMotor:
     def __init__(self, 
             port : Port, 
-            switchPosition=SwitchPosition.STRAIGHT,
+            switchPosition=SwitchPosition.STRAIGHT, 
             direction=Direction.CLOCKWISE,
             probability_straight_to_curved=0.5,
             probability_curved_to_straight=0.5,
@@ -150,6 +150,13 @@ class SwitchMotor:
         self.motor.reset_angle(0)
         angle1 = self.motor.run_until_stalled(self.power / 5)
         angle2 = self.motor.run_until_stalled(-self.power / 5)
+
+        
+        diff = angle1 - angle2
+        if diff > 100:
+            # move angles a little bit towards each other
+            angle1 = int(angle1 - diff/5)
+            angle2 = int(angle2 + diff/5)
 
         other_switch_position = SwitchPosition.STRAIGHT if self.switchPosition == SwitchPosition.CURVED else SwitchPosition.CURVED
         if angle1 < -angle2:
@@ -251,6 +258,15 @@ hub = TechnicHub()
 controller = SwitchController(hub)
 
 # configure your switch layout here
+sensor = SwitchDistanceSensor(Port.A, criticalDistance=70)
+motor1 = SwitchMotor(Port.B, probability_curved_to_straight=0.25, probability_straight_to_curved=1)
+motor2 = SwitchMotor(Port.C, probability_curved_to_straight=0.33, probability_straight_to_curved=0.67)
+motor3 = SwitchMotor(Port.D, probability_curved_to_straight=0.7, probability_straight_to_curved=0.7)
+
+motor1.registerSuccessor(motor2, SwitchPosition.CURVED)
+motor2.registerSuccessor(motor3, SwitchPosition.CURVED)
+
+controller.registerSensor(sensor, motor1)
 
 # start the switch controller
 controller.run()

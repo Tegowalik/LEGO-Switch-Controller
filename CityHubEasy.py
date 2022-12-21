@@ -1,10 +1,10 @@
-from pybricks.hubs import TechnicHub
+from pybricks.hubs import CityHub
 from pybricks.pupdevices import Motor, ColorDistanceSensor
 from pybricks.parameters import Port, Direction, Button, Color, Stop
 from pybricks.tools import wait
 from urandom import random
 
-hub = TechnicHub()
+hub = CityHub()
 hub.system.set_stop_button(None)
 hub.light.on(Color.ORANGE)
 sensor = ColorDistanceSensor(Port.A)
@@ -23,10 +23,10 @@ turn = 50
 stop_mode = Stop.BRAKE
 
 # probability to switch from the initial position to the other one after a train has passed the sensor
-p_init_to_not_init = 0.5
+probability_init_to_not_init = 0.5
 # probability to switch from the non-initial position to the initial one after a train has passed the sensor
-p_not_init_to_init = 0.8  
-# note since p_not_init_to_init > p_init_to_not_init the initial position is more likely
+probability_not_init_to_init = 0.8  
+# note since probability_not_init_to_init > probability_init_to_not_init the initial position is more likely
 
 # calibrate the motor
 angle1 = motor.run_until_stalled(power / 4)
@@ -46,24 +46,28 @@ def switch_angle():
 
 
 while Button.CENTER not in hub.button.pressed():
+
+    waiting_time = dt
     d = sensor.distance()
     if d < critical_distance:
         timeout = int(initial_timeout_s * 1000 / dt)
-        hub.light.on(Color.RED)
+        hub.light.on(Color.ORANGE)
     else:
         if timeout > 0:
             timeout -= 1
-            hub.light.on(Color.ORANGE)
+            hub.light.on(Color.YELLOW)
         elif timeout == 0:
             timeout = -1
-            hub.light.on(Color.GREEN)
-            probability = p_init_to_not_init if angle == init_angle else p_not_init_to_init
+            probability = probability_init_to_not_init if angle == init_angle else probability_not_init_to_init
             if random() < probability:
                 angle = switch_angle()
-                motor.run_target(power, angle, then=stop_mode, wait=False)
-    wait(dt)
+                hub.light.on(Color.RED)
+                motor.run_target(power, angle, then=stop_mode, wait=True)
+                waiting_time = 0 # the motor moving lasts already longer than dt
+            hub.light.on(Color.GREEN)
+    wait(waiting_time)
 
-hub.light.on(Color.RED)
+hub.light.on(Color.BLUE)
 # move switch to initial position
 if angle != init_angle:
     motor.run_target(power, init_angle, then=stop_mode)

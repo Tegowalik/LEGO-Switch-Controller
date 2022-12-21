@@ -18,7 +18,10 @@ for line in lines:
         if "display" not in line:
             filteredLines.append(line)
 
-filteredLines = [l.replace("system.buttons", "system.button") for l in filteredLines]
+filteredLines = [l.replace("hub.buttons", "hub.button") for l in filteredLines]
+remove = [", Side", "# update status light matrix", "if self.hub != None:"]
+for r in remove:
+    filteredLines = [l.replace(r, "") for l in filteredLines]
 for hub in ["CityHub", "TechnicHub"]:
     with open("%s.py" % hub, "w+") as f:
         hubFilteredLines = [l.replace("PrimeHub", hub) for l in filteredLines]

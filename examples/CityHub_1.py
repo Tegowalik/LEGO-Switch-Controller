@@ -1,4 +1,4 @@
-from pybricks.hubs import TechnicHub
+from pybricks.hubs import CityHub
 from pybricks.pupdevices import Motor, ColorDistanceSensor, InfraredSensor, ColorSensor, UltrasonicSensor
 from pybricks.parameters import Port, Direction, Button, Color, Stop
 from pybricks.tools import wait
@@ -247,10 +247,13 @@ class SwitchController():
             self.hub.system.set_stop_button(None)
         self.color(Color.GREEN)
 
-hub = TechnicHub()
+hub = CityHub()
 controller = SwitchController(hub)
 
 # configure your switch layout here
+sensor = SwitchDistanceSensor(Port.A, criticalDistance=70)
+motor = SwitchMotor(Port.B, probability_curved_to_straight=0.8, probability_straight_to_curved=0.8)
+controller.registerSensor(sensor, motor)
 
 # start the switch controller
 controller.run()
