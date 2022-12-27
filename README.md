@@ -256,23 +256,27 @@ In case you don't want to flash your MINDSTORMS with PyBricks firmware, you can 
 ### Special Features
 Additionally to the [Powered Up Hub Speical Features](#powered_up_special_features) the light matrix is used to indicate the progress of the sensor timeout. Depending on the number of sensors the color matrix shows progress bar(s) indicating the timeout progress. If a motor is currently moving, the color matrix shows a cross ('x') additionally to the red light.
 
-<img src="img/51515_1.gif" width="350" style="transform:rotate(90deg);">
-<img src="img/51515_2.gif" width="350" style="transform:rotate(90deg);">
-<img src="img/51515_3.gif" width="350" style="transform:rotate(90deg);">
+<table><tr><td>
+  <img src="img/51515_1.gif" width="350" style="transform:rotate(90deg);"></td>
+  <td><img src="img/51515_2.gif" width="350" style="transform:rotate(90deg);"></td>
+<td><img src="img/51515_3.gif" width="350" style="transform:rotate(90deg);"></td>
+</tr>
+</table>
 
 ## MINDSTORMS EV3 (31313)
 To run python programs on an EV3, you first need to follow these [instructions](https://pybricks.com/install/mindstorms-ev3/installation/). After that you can use the following programs:
 
 |Description | Image | Program |
 |-|-|-|
-|2 Sensors + 2 XL Motors | TODO| [program](ev3_switch_1_1_XL_XL.py)|
-|1 Sensor + 2 XL Motors | TODO| [program](ev3_switch_2_XL_XL.py)|
-|2 Sensors + 2 XL Motors + 1 M Motor | TODO| [program](ev3_switch_2_1_XL_M_XL.py)|
+|2 Sensors + 2 XL Motors | | [program](ev3_switch_1_1_XL_XL.py)|
+|1 Sensor + 2 XL Motors | <img src="img/ev3_1_1.jpg" width="350">| [program](ev3_switch_2_XL_XL.py)|
+|2 Sensors + 2 XL Motors + 1 M Motor |  <img src="img/ev3_2_1.jpg" width="350">| [program](ev3_switch_2_1_XL_M_XL.py)|
 
 Of course not all possible combinations of sensors and motors are provided. In addition the programs aren't that flexible as the PyBricks ones. However the basic idea how to adjust the code for a certain sensor-motor-layout should be obvious.
 
 ## Known Issues
 - The variable/ method naming in the python files mixes CamelCasing and snake_casing. As a programmer, I really regret that I haven't been consistently using a case system. However I don't have neither the time nor the motivation to make the naming consistent.
+- Some pictures of configurations are missing
 - As soon as communication between hubs is possible, this makes a lot of new features possible (large chained layouts are possible -> no limitation due to limited available ports). Furthermore, it would be awesome if PyBricks Hubs could connect to a app which supervises *all* hubs.
 
 If you find any unexpected behaviour or have a feature request, please create an issue or a pull request.
