@@ -1,4 +1,4 @@
-# Pybricks Switch Controller
+# Pybricks LEGO Train Switch Controller
 Automate your LEGO train tracks by randomly change the direction of switches by detecting incoming trains. An example usage is presented here: https://youtu.be/EsnzuTQ5WIw?t=199
 
 In principle, all the programs work in the same way: Trains are detected by an distance sensor which causes the switch to change direction (at least with some probability). Depending on the used hardware components (Powered Up City Hub/ Technic Hub, MINDSTORMS Robot Inventor 51515, MINDSTORMS EV3 31313, Spike Prime) different programs are required as explained later in detail.
