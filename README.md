@@ -41,10 +41,10 @@ The following examples should cover the most important switch-sensor-motor-combi
 
 <table>
 <tr>
-  <td>Description </td> <td>Picture </td> <td>Easy Code </td>
+  <td>Description </td> <td>Picture </td> <td>Code </td>
 </tr>
 <tr>
-  <td>1 Sensor + 1 Switch </td> <td><img src="img/CityHub.jpg" width="200"> </td>
+  <td>1 Sensor + 1 Switch </td> <td><img src="img/CityHub.jpg" width="350"> </td>
 <td>
 
 ```python
@@ -57,7 +57,7 @@ controller.registerSensor(sensor, motor)
 </tr>
 <tr>
 <td> 1 Sensor + 2 Motors </td>
-  <td>TODO</td>
+  <td></td>
 <td>
 
 ```python
@@ -72,7 +72,7 @@ controller.registerSensor(sensor, motor)
 </tr>
   <tr>
 <td> 1 Sensor + 3 Motors </td>
-  <td>TODO</td>
+  <td><img src="img/TechnicHub_1_1_1.jpg" width="350"></td>
 <td>
 
 ```python
@@ -81,15 +81,15 @@ motor1 = SwitchMotor(Port.B)
 motor2 = SwitchMotor(Port.C)
 motor3 = SwitchMotor(Port.D)
 motor1.registerSuccessor(motor2, SwitchPosition.CURVED)
-motor1.registerSuccessor(motor3, SwitchPosition.STRAIGHT)
+motor1.registerSuccessor(motor3, SwitchPosition.CURVED)
 controller.registerSensor(sensor, motor)
 ```
 
   </td>
 </tr>
     <tr>
-<td> 1 Sensor + 3 Motors </td>
-  <td>TODO</td>
+<td> 2 Sensors + 2 Motors </td>
+  <td><img src="img/TechnicHub_1_1.jpg" width="350"></td>
 <td>
 
 ```python
@@ -105,21 +105,21 @@ controller.registerSensor(sensor2, motor2)
 </tr>
 </table>
 
-Note that for the [City Hub](https://www.lego.com/en-us/product/hub-88009) (the hub used for the City trains), only the first example can be used since only two ports are available. In particular, another special program is available for this case which is easier to understand (esspecially if you are not familiar with object oriented programming): [CityHub_easy.py](CityHub_easy.py).
+Note that for the [City Hub](https://www.lego.com/en-us/product/hub-88009) (the hub used for the City trains), only the first example can be used since only two ports are available (see [here](examples/CityHub_1.py)). In particular, another special program is available for this case which is easier to understand (esspecially if you are not familiar with object oriented programming): [CityHub_easy.py](CityHub_easy.py).
 
-Personally, I recommend to first running the program without including the current program to the firmware. So you can easily experiment different settings and see what fits your purposes best (errors can be seen in the terminal). Once the program is ready flash the hub with including the current program to the firmware (Currently this option is available under "Settings" -> "Firmware" -> "Include current program"). This causes that flashed program is executed whenever the hub is started in the future - unless you reflash it again. You can easily reflash the original LEGO firmware by connecting the hub to the powered up app. The disadvantage of the flashing the program to the firmware is that you can no longer see the terminal output, so make sure that the program runs without errors before doing this.
+Personally, I recommend to first running the program without including the current program to the hub's firmware. So you can easily experiment different settings and see what fits your purposes best (errors can be seen in the terminal). Once the program is ready, flash the hub and include the current program to the firmware (Currently this option is available under "Settings" -> "Firmware" -> "Include current program"). This causes that the flashed program is executed whenever the hub is started in the future - unless you reflash it again. You can easily reflash the original LEGO firmware by connecting the hub to the powered up app. The disadvantage of flashing the program to the firmware is that you can no longer see the terminal output, so make sure that the program runs without errors before doing this.
 
 ### Powered Up Special Features
 - **Colors**:
-  - `RED`: Switch is currently moving the direction. No train should now be passing the switch!
+  - `RED`: Switch is currently moving the direction. No train should now be passing the switch! Otherwise derailments could occur!
   - `ORANGE`: Currently a switch is detected in front of the sensor
-  - `YELLOW`: Currently no train is in front of the sensor, but was a short time ago (so either the transition of two wagons is in front of the sensor or the train passed completely the sensor)
+  - `YELLOW`: Currently no train is in front of the sensor, but a train was detected a short time ago (so either the transition of two wagons is in front of the sensor or the train passed completely the sensor a short time ago)
   - `GREEN`: otherwise (sensor is waiting for an incoming train)
   - In case of a program with multiple sensors, the first color in the list is shown whose condition is true for at least one sensor
 - **Power Off**: Use the green button of the hub to power the controller off. This might cause resetting the switches to the initial state.
 - **Probabilities**: The constructor `SwitchMotor` has the optional parameters `probability_straigth_to_curved` and `probability_curved_to_straigth` (default value `0.5` each). The default configuration means, that the motor moves on average after every second train. Setting both parameter to `1.0` means that the motor moves at every train. Setting `probability_straigth_to_curved < probability_curved_to_straigth` means that the motor is more often in the *straight* position.
 ```python
-  motor = SwitchMotor(Port.B, probability_straigth_to_curved = 0.5, probability_curved_to_straigth = 0.5)
+  motor = SwitchMotor(Port.B, probability_straigth_to_curved = 0.5, probability_curved_to_straigth = 0.8)
 ```
 - **Motor Auto Calibration**: Of course the `SwitchMotor` needs to know what motor positions correspond to which `SwitchPosition` (either `STRAIGHT` or `CURVED`). This is achieved by 
   - the parameter `switchPosition` in it's constructor which states the initial `SwitchPosition` (default is `STRAIGHT`)
@@ -128,9 +128,10 @@ Personally, I recommend to first running the program without including the curre
   ```
   - an information how much the motor needs to move to get to the other position. This can be achieved by the parameter `turn_degrees` which is equal to the degrees from the initial position to the other. However it is really complicated to figure out the right number (depends obviously on the gear ratio, ...). If `turn_degrees` is None (as it is by default), an auto calibration is done i.e. the motor moves left and right until the motor stalls. Make sure that the motor is connected to the switch otherwise it would move forever!
   ```python
-    motor = SwitchMotor(Port.B, turn_degrees=100)
+    motor1 = SwitchMotor(Port.B, turn_degrees=100) # fixed degrees
+    motor2 = SwitchMotor(Port.C, turn_degrees=None) # auto calibration
   ```
-- **Distance Sensors**: As described above multiple distance sensors are supported: `SwitchDistanceSensor`, `SwitchIRSensor`, `SwitchUltrasonicSensor`, `SwitchColorSensor`. All sensors have a parameter `criticalDistance` which refers to the distance from which the sensor should be triggered (detect a train). A larger `criticalDistance` means that also objects further away are recognized. Default values are given for each sensor type, but the perfect value for you might depend on the sensors's positioning and the lightning conditions. 
+- **Distance Sensors**: As described above multiple distance sensors are supported: `SwitchDistanceSensor`, `SwitchIRSensor`, `SwitchUltrasonicSensor`, `SwitchColorSensor`. All sensors have a parameter `criticalDistance` which refers to the distance from which the sensor should be triggered (detect a train). A larger `criticalDistance` means that also objects further away are recognized. Default values are given for each sensor type, but the perfect value for you might depend on the sensors's positioning and the lightning conditions. For me, the `SwitchDistanceSensor` works the most reliable.
  ```python
   sensor = SwitchDistanceSensor(Port.A, criticalDistance=50) # critical distance in %
   sensor = SwitchIRSensor(Port.B, criticalDistance=80) # critical distance in %
@@ -138,7 +139,11 @@ Personally, I recommend to first running the program without including the curre
   sensor = SwitchColorSensor(Port.D, criticalDistance=70) # critical distance in %
  ```
  - **Timeout**: Since the sensor usually does not trigger for the whole time a train is passing by (e.g. between two train trailers), a timeout is used to skip those gaps. Additionally, the timeout is needed if the motor moves *after* a train has passed. In that case the train still needs some time to pass the (last) switch (distance from sensor to the last switch). The length of the `timeout` can be set by using `sensor.set_init_timeout(40)` where 40 is the timeout value (also the default value). Note that the meaning of the timeout value depends on the `dt`-value (time in ms between two ticks) of the SwitchController. The default `dt`-value of 50ms combined with an timeout of 40 means that after 40 * 50ms = 2s without sensor triggering a train is considered to be passed completely.
-- **Rising/ Falling Edge** Two options when the switch moves are provided: The motor moves right when an incoming train is detected (`SwitchMode.RISING_EDGE`) or after a train has passed the sensor (and switch) completely (`SwitchMode.FALLING_EDGE`). The option can be set by using `sensor.set_switch_mode(SwitchMode.RISING_EDGE)`. However, I can only recommend using `SwitchMode.FALLING_EDGE` (default value) since the powered up motors seem to be too weak/ slow (the moving of the motor takes too long). Unless the distance between the sensor and the switch isn't far and/ or the trains are driving slow, the rising edge mode didn't work for me with powered up motors. By the way the MINDSTORMS EV3 motors work with the rising edge mode.
+- **Rising/ Falling Edge** Two options when the switch moves are provided: The motor moves right when an incoming train is detected (`SwitchMode.RISING_EDGE`) or after a train has passed the sensor (and switch) completely (`SwitchMode.FALLING_EDGE`). The option can be set by using `sensor.set_switch_mode(SwitchMode.RISING_EDGE)`. However, I can only recommend using `SwitchMode.FALLING_EDGE` (default value) since the powered up motors seem to be too weak/ slow (the moving of the motor takes too long). Unless the distance between the sensor and the switch isn't far and/ or the trains are driving slow, the rising edge mode didn't work for me reliable with powered up motors. By the way the MINDSTORMS EV3 motors work with the rising edge mode.
+```
+  sensor = SwitchDistanceSensor(Port.A)
+  sensor.set_switch_mode(SwitchMode.RISING_EDGE)
+```
 
 ## MINDSTORMS (Robot Inventor 51515, SPIKE Prime 45678)
 The [PyBricks](https://pybricks.com/) code for these hubs works similar to the ones using the Powered Up Hubs. You just need to use the special code basis: [MINDSTORMS_51515.py](MINDSTORMS_51515.py). (I haven't tested it for the SPIKE Prime, but according to the PyBricks documentation, the code should work as well).
@@ -149,10 +154,10 @@ Using the MINDSTORMS code basis, all [Powered Up Configuration Examples](#powere
 
 <table>
 <tr>
-  <td>Description </td> <td>Picture </td> <td>Easy Code </td>
+  <td>Description </td> <td>Picture </td> <td>Code </td>
 </tr>
 <tr>
-  <td>2 Sensors + 3 Switchs </td> <td>TODO</td>
+  <td>2 Sensors + 3 Switchs </td> <td></td>
 <td>
 
 ```python
@@ -169,7 +174,7 @@ controller.registerSensor(sensor2, motor3)
   </td>
 </tr>
   <tr>
-  <td>2 Sensors + 4 Switchs (2 times (1 Sensor + 2 Switch) </td> <td>TODO</td>
+  <td>2 Sensors + 4 Switchs (2 times (1 Sensor + 2 Switch) </td> <td></td>
 <td>
 
 ```python
@@ -188,7 +193,7 @@ controller.registerSensor(sensor2, motor3)
   </td>
 </tr>
     <tr>
-  <td>2 Sensors + 4 Switchs (1 Sensor + 1 Switch and 1 Sensor + (1+2)  Switches) </td> <td>TODO</td>
+  <td>2 Sensors + 4 Switchs (1 Sensor + 1 Switch and 1 Sensor + (1+2)  Switches) </td> <td></td>
 <td>
 
 ```python
@@ -207,7 +212,7 @@ controller.registerSensor(sensor2, motor2)
   </td>
 </tr>
 <tr>
-  <td>2 Sensors + 4 Switchs (1 Sensor + 1 Switch and 1 Sensor + (1+1+1)  Switches) </td> <td>TODO</td>
+  <td>2 Sensors + 4 Switchs (1 Sensor + 1 Switch and 1 Sensor + (1+1+1)  Switches) </td> <td></td>
 <td>
 
 ```python
@@ -226,7 +231,7 @@ controller.registerSensor(sensor2, motor2)
   </td>
 </tr>
       <tr>
-  <td>3 Sensors + 3 Switchs</td> <td>TODO</td>
+  <td>3 Sensors + 3 Switchs</td> <td><img src="img/mindstorms_1_1_1.jpg" width="350"></td>
 <td>
 
 ```python
@@ -250,6 +255,8 @@ In case you don't want to flash your MINDSTORMS with PyBricks firmware, you can 
 
 ### Special Features
 Additionally to the [Powered Up Hub Speical Features](#powered_up_special_features) the light matrix is used to indicate the progress of the sensor timeout. Depending on the number of sensors the color matrix shows progress bar(s) indicating the timeout progress. If a motor is currently moving, the color matrix shows a cross ('x') additionally to the red light.
+
+<img src="img/51515_2.gif" width="350" class="rotate90">
 
 TODO add gifs
 
