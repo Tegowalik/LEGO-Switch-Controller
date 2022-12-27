@@ -257,9 +257,9 @@ In case you don't want to flash your MINDSTORMS with PyBricks firmware, you can 
 Additionally to the [Powered Up Hub Speical Features](#powered_up_special_features) the light matrix is used to indicate the progress of the sensor timeout. Depending on the number of sensors the color matrix shows progress bar(s) indicating the timeout progress. If a motor is currently moving, the color matrix shows a cross ('x') additionally to the red light.
 
 <table><tr><td>
-  <img src="img/51515_1.gif" width="350" style="transform:rotate(90deg);"></td>
-  <td><img src="img/51515_2.gif" width="350" style="transform:rotate(90deg);"></td>
-<td><img src="img/51515_3.gif" width="350" style="transform:rotate(90deg);"></td>
+  <img src="img/51515_1.gif" width="300" style="transform:rotate(90deg);"></td>
+  <td><img src="img/51515_2.gif" width="300" style="transform:rotate(90deg);"></td>
+<td><img src="img/51515_3.gif" width="300" style="transform:rotate(90deg);"></td>
 </tr>
 </table>
 
