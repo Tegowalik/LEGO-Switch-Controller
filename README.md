@@ -256,10 +256,9 @@ In case you don't want to flash your MINDSTORMS with PyBricks firmware, you can 
 ### Special Features
 Additionally to the [Powered Up Hub Speical Features](#powered_up_special_features) the light matrix is used to indicate the progress of the sensor timeout. Depending on the number of sensors the color matrix shows progress bar(s) indicating the timeout progress. If a motor is currently moving, the color matrix shows a cross ('x') additionally to the red light.
 
-<img src="img/51515_2.gif" width="350">
-
-TODO add gifs
-
+<img src="img/51515_1.gif" width="350" style="transform:rotate(90deg);">
+<img src="img/51515_2.gif" width="350" style="transform:rotate(90deg);">
+<img src="img/51515_3.gif" width="350" style="transform:rotate(90deg);">
 
 ## MINDSTORMS EV3 (31313)
 To run python programs on an EV3, you first need to follow these [instructions](https://pybricks.com/install/mindstorms-ev3/installation/). After that you can use the following programs:
