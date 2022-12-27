@@ -123,7 +123,7 @@ class SwitchColorSensor(SwitchSensor):
 class SwitchMotor:
     def __init__(self, 
             port : Port, 
-            switchPosition=SwitchPosition.STRAIGHT,
+            switchPosition=SwitchPosition.STRAIGHT, 
             direction=Direction.CLOCKWISE,
             probability_straight_to_curved=0.5,
             probability_curved_to_straight=0.5,
@@ -152,6 +152,12 @@ class SwitchMotor:
         angle1 = self.motor.run_until_stalled(self.power / 5)
         angle2 = self.motor.run_until_stalled(-self.power / 5)
 
+        # move angles a little bit towards each other
+        diff = angle1 - angle2
+        if diff > 100:
+            angle1 = int(angle1 - diff / 5)
+            angle2 = int(angle2 + diff / 5)
+
         other_switch_position = SwitchPosition.STRAIGHT if self.switchPosition == SwitchPosition.CURVED else SwitchPosition.CURVED
         if angle1 < -angle2:
             self.motor.run_target(self.power, angle1)
@@ -168,7 +174,8 @@ class SwitchMotor:
         return self.angle1 if self.angle == self.angle2 else self.angle2
 
     def move(self):
-        self.display.cross()
+        if self.display is not None:
+            self.display.cross()
         if self.switchPosition == SwitchPosition.STRAIGHT:
             self.switchPosition = SwitchPosition.CURVED
         elif self.switchPosition == SwitchPosition.CURVED:
@@ -193,6 +200,8 @@ class SwitchMotor:
 
     def setDisplay(self, display: LightMatrix):
         self.display = display
+        for successor in self.successors.values():
+            successor.setDisplay(display)
 
 class LightMatrix():
 
@@ -309,11 +318,9 @@ class SwitchController():
         self.color(Color.GREEN)
 
 hub = PrimeHub()
-hub.display.orientation(Side.BOTTOM)
 controller = SwitchController(hub)
 
 # configure your switch layout here
 
 # start the switch controller
 controller.run()
-
