@@ -119,7 +119,7 @@ Personally, I recommend to first running the program without including the curre
 - **Power Off**: Use the green button of the hub to power the controller off. This might cause resetting the switches to the initial state.
 - **Probabilities**: The constructor `SwitchMotor` has the optional parameters `probability_straigth_to_curved` and `probability_curved_to_straigth` (default value `0.5` each). The default configuration means, that the motor moves on average after every second train. Setting both parameter to `1.0` means that the motor moves at every train. Setting `probability_straigth_to_curved < probability_curved_to_straigth` means that the motor is more often in the *straight* position.
 ```python
-  motor = SwitchMotor(Port.B, probability_straigth_to_curved = 0.5, probability_curved_to_straigth = 0.8)
+  motor = SwitchMotor(Port.B, probability_straigth_to_curved=0.5, probability_curved_to_straigth=0.8)
 ```
 - **Motor Auto Calibration**: Of course the `SwitchMotor` needs to know what motor positions correspond to which `SwitchPosition` (either `STRAIGHT` or `CURVED`). This is achieved by 
   - the parameter `switchPosition` in it's constructor which states the initial `SwitchPosition` (default is `STRAIGHT`)
@@ -256,7 +256,7 @@ In case you don't want to flash your MINDSTORMS with PyBricks firmware, you can 
 ### Special Features
 Additionally to the [Powered Up Hub Speical Features](#powered_up_special_features) the light matrix is used to indicate the progress of the sensor timeout. Depending on the number of sensors the color matrix shows progress bar(s) indicating the timeout progress. If a motor is currently moving, the color matrix shows a cross ('x') additionally to the red light.
 
-<img src="img/51515_2.gif" width="350" class="rotate90">
+<img src="img/51515_2.gif" width="350">
 
 TODO add gifs
 
