@@ -5,7 +5,8 @@ In principle, all the programs work in the same way: Trains are detected by an d
 
 Most of the provided programs are running [PyBricks](https://pybricks.com/) code. However, for LEGO MINDSTORMs EV3 (31313) [EV3 MicroPython](https://pybricks.com/ev3-micropython/) is used. The LEGO MINDSTORMS Robot Inventor (51515) can be used either with PyBricks or with the official [LEGO MINDSTORMS Software with Python Programming](https://lego.github.io/MINDSTORMS-Robot-Inventor-hub-API/).
 
-To get the motor rotation change the direction of the switch, a design of [SteinaufStein](https://www.youtube.com/channel/UCJ-c1vQHVZZ6S6xhjjNo7Gg) is used ([video tutorial](https://youtu.be/Jwv6kI0IBoQ?t=63)). Note that for some motors (like most of the powered up motors) an additional gear ration is needed since the motors are too weak to move. 
+To get the motor rotation change the direction of the switch, a design of [SteinaufStein](https://www.youtube.com/channel/UCJ-c1vQHVZZ6S6xhjjNo7Gg) is used ([video tutorial](https://youtu.be/Jwv6kI0IBoQ?t=63)). Note that for some powered up motors an additional gear ration is needed since the motors are too weak to move the switch position. 
+
 <img src="img/switch_gear_ratio.jpg" width="300">
 
 ## Powered Up Hubs
@@ -43,7 +44,7 @@ The following examples should cover the most important switch-sensor-motor-combi
   <td>Description </td> <td>Picture </td> <td>Easy Code </td>
 </tr>
 <tr>
-  <td>1 Sensor + 1 Switch </td> <td>TODO</td>
+  <td>1 Sensor + 1 Switch </td> <td><img src="img/CityHub.jpg" width="200"> </td>
 <td>
 
 ```python
