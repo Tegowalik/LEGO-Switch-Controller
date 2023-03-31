@@ -275,7 +275,7 @@ To run python programs on an EV3, you first need to follow these [instructions](
 Of course not all possible combinations of sensors and motors are provided. In addition the programs aren't that flexible as the PyBricks ones. However the basic idea how to adjust the code for a certain sensor-motor-layout should be obvious.
 
 ## Known Issues
-- The variable/ method naming in the python files mixes CamelCasing and snake_casing. As a programmer, I really regret that I haven't been consistently using a case system. However I don't have neither the time nor the motivation to make the naming consistent.
+- The variable/ method naming in the python files mixes CamelCasing and snake_casing. As a programmer, I really regret that I haven't been consistently using a single case system. However I don't have neither the time nor the motivation to make the naming consistent.
 - Some pictures of configurations are missing
 - As soon as communication between hubs is possible, this makes a lot of new features possible (large chained layouts are possible -> no limitation due to limited available ports). Furthermore, it would be awesome if PyBricks Hubs could connect to a app which supervises *all* hubs.
 
