@@ -1,11 +1,11 @@
 # Pybricks LEGO Train Switch Controller
-Automate your LEGO train tracks by randomly change the direction of switches by detecting incoming trains. An example usage is presented here: https://youtu.be/EsnzuTQ5WIw?t=199
+Automate your LEGO train tracks by randomly change the direction of switches by detecting incoming trains. This [video](https://youtu.be/nyAEZ-QBgTA) shows how it can be used.
 
 In principle, all the programs work in the same way: Trains are detected by an distance sensor which causes the switch to change direction (at least with some probability). Depending on the used hardware components (Powered Up City Hub/ Technic Hub, MINDSTORMS Robot Inventor 51515, MINDSTORMS EV3 31313, Spike Prime) different programs are required as explained later in detail.
 
 Most of the provided programs are running [PyBricks](https://pybricks.com/) code. However, for LEGO MINDSTORMs EV3 (31313) [EV3 MicroPython](https://pybricks.com/ev3-micropython/) is used. The LEGO MINDSTORMS Robot Inventor (51515) can be used either with PyBricks or with the official [LEGO MINDSTORMS Software with Python Programming](https://lego.github.io/MINDSTORMS-Robot-Inventor-hub-API/).
 
-To get the motor rotation change the direction of the switch, a design of [SteinaufStein](https://www.youtube.com/channel/UCJ-c1vQHVZZ6S6xhjjNo7Gg) is used ([video tutorial](https://youtu.be/Jwv6kI0IBoQ?t=63)). Note that for some powered up motors an additional gear ration is needed since the motors are too weak to move the switch position. 
+To get the motor rotation change the direction of the switch, a design of [SteinaufStein](https://www.youtube.com/channel/UCJ-c1vQHVZZ6S6xhjjNo7Gg) is used ([video tutorial](https://youtu.be/Jwv6kI0IBoQ?t=63)). Note that for some powered up motors an additional gear ration is needed since the motors are too weak to move the switch position. Also note that this design only works for 6W (6 wide) trains (as all the LEGO City trains are), not for 8W or larger trains!
 
 <img src="img/switch_gear_ratio.jpg" width="300">
 
