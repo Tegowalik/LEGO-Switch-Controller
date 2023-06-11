@@ -5,7 +5,7 @@ In principle, all the programs work in the same way: Trains are detected by an d
 
 Most of the provided programs are running [PyBricks](https://pybricks.com/) code. However, for LEGO MINDSTORMs EV3 (31313) [EV3 MicroPython](https://pybricks.com/ev3-micropython/) is used. The LEGO MINDSTORMS Robot Inventor (51515) can be used either with PyBricks or with the official [LEGO MINDSTORMS Software with Python Programming](https://lego.github.io/MINDSTORMS-Robot-Inventor-hub-API/).
 
-To get the motor rotation change the direction of the switch, a design of [SteinaufStein](https://www.youtube.com/channel/UCJ-c1vQHVZZ6S6xhjjNo7Gg) is used ([video tutorial](https://youtu.be/Jwv6kI0IBoQ?t=63)). Note that for some powered up motors an additional gear ration is needed since the motors are too weak to move the switch position. Also note that this design only works for 6W (6 wide) trains (as all the LEGO City trains are), not for 8W or larger trains!
+To get the motor rotation change the direction of the switch, a design of [SteinaufStein](https://www.youtube.com/channel/UCJ-c1vQHVZZ6S6xhjjNo7Gg) can be used ([video tutorial](https://youtu.be/Jwv6kI0IBoQ?t=63)). Note that for some powered up motors an additional gear ration is needed since the motors are too weak to move the switch position. Also note that this design only works for 6W (6 wide) trains (as all the LEGO City trains are), not for 8W or larger trains! You can use the design of [Brick Works](https://www.youtube.com/@BricksWorks) for 8W trains ([english](https://youtu.be/kkVGYyH3zDw), [german](https://youtu.be/sTTl4Nep_6Q), [danish](https://youtu.be/293yJBwQ2W8)).
 
 <img src="img/switch_gear_ratio.jpg" width="300">
 
@@ -277,6 +277,6 @@ Of course not all possible combinations of sensors and motors are provided. In a
 ## Known Issues
 - The variable/ method naming in the python files mixes CamelCasing and snake_casing. As a programmer, I really regret that I haven't been consistently using a single case system. However I don't have neither the time nor the motivation to make the naming consistent.
 - Some pictures of configurations are missing
-- As soon as communication between hubs is possible, this makes a lot of new features possible (large chained layouts are possible -> no limitation due to limited available ports). Furthermore, it would be awesome if PyBricks Hubs could connect to a app which supervises *all* hubs.
+- As soon as communication between hubs is possible, this makes a lot of new features possible (large chained layouts are possible -> no limitation due to limited available ports). Furthermore, it would be awesome if PyBricks Hubs could connect to an app which supervises *all* hubs.
 
 If you find any unexpected behaviour or have a feature request, please create an issue or a pull request.
