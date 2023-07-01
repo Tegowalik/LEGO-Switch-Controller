@@ -27,17 +27,18 @@ As sensor any sensor which can determine a distance is possible. The pictures ar
 
 Since all sensors except the Color & Distance Sensor are used only in MINDSTORMS/ SPIKE sets (which are EOL 2022), the Color & Distance Sensor seems to be the most suitable - also because it is sold individually by LEGO and is relatively cheap.
 
-Once you have organized the hub, motor(s) and sensor(s), you are ready to run the program. Therefore you need a hub dependant *code basis* and a switch layout dependant *configuration part*.
-
-### Powered Up Code Basis
-| City Hub | [CityHub.py](CityHub.py) |
-|-|-|
-| Technic Hub | [TechnicHub.py](TechnicHub.py) |
+Once you have organized the hub, motor(s) and sensor(s), you are ready to run the program. Therefore you need to import the file [switch.py](switch.py) into PyBricks Code. Additionally you need to add your specific track configuration as described below with examples. This can be either done at the end of switch.py or in another file which imports switch.py, e.g.
+```python
+from switch import *
+sensor = SwitchDistanceSensor(Port.A)
+motor = SwitchMotor(Port.B)
+controller = SwitchController()
+controller.register_sensor(smart_sensor, motor)
+controller.run()
+```
 
 ### Powered Up Configuration Part
-Depending on your actual switch layout, you need to add a few lines to the program right below the line `# configure your switch layout here`.
-
-The following examples should cover the most important switch-sensor-motor-combinations. You might need to make little changes (like changing the used sensor type, port or parameter values). Note that depending on your specific train layout some parameters might need to be adjusted as explained in the [Special Features](#powered-up-special-features) section.
+You can easily adjust the configuration depending on your actual switch layout and personal preferences. The following examples should cover the most important switch-sensor-motor-combinations. You might need to make little changes (like changing the used sensor type, port or parameter values). Note that depending on your specific train layout some parameters might need to be adjusted as explained in the [Special Features](#powered-up-special-features) section.
 
 <table>
 <tr>
@@ -50,7 +51,8 @@ The following examples should cover the most important switch-sensor-motor-combi
 ```python
 sensor = SwitchDistanceSensor(Port.A)
 motor = SwitchMotor(Port.B)
-controller.registerSensor(sensor, motor)
+controller.register_sensor(sensor, motor)
+controller.run()
 ```
 
   </td>
@@ -64,8 +66,9 @@ controller.registerSensor(sensor, motor)
 sensor = SwitchDistanceSensor(Port.A)
 motor1 = SwitchMotor(Port.B)
 motor2 = SwitchMotor(Port.C)
-motor1.registerSuccessor(motor2, SwitchPosition.CURVED)
-controller.registerSensor(sensor, motor)
+motor1.register_successor(motor2, SwitchPosition.CURVED)
+controller.register_sensor(sensor, motor)
+controller.run()
 ```
 
   </td>
@@ -80,9 +83,10 @@ sensor = SwitchDistanceSensor(Port.A)
 motor1 = SwitchMotor(Port.B)
 motor2 = SwitchMotor(Port.C)
 motor3 = SwitchMotor(Port.D)
-motor1.registerSuccessor(motor2, SwitchPosition.CURVED)
-motor1.registerSuccessor(motor3, SwitchPosition.CURVED)
-controller.registerSensor(sensor, motor)
+motor1.register_successor(motor2, SwitchPosition.CURVED)
+motor1.register_successor(motor3, SwitchPosition.CURVED)
+controller.register_sensor(sensor, motor)
+controller.run()
 ```
 
   </td>
@@ -97,8 +101,9 @@ sensor1 = SwitchIRSensor(Port.A)
 sensor2 = SwitchUltrasonicSensor(Port.C)
 motor1 = SwitchMotor(Port.B)
 motor2 = SwitchMotor(Port.D)
-controller.registerSensor(sensor1, motor1)
-controller.registerSensor(sensor2, motor2)
+controller.register_sensor(sensor1, motor1)
+controller.register_sensor(sensor2, motor2)
+controller.run()
 ```
 
   </td>
@@ -124,7 +129,7 @@ Personally, I recommend to first running the program without including the curre
 - **Motor Auto Calibration**: Of course the `SwitchMotor` needs to know what motor positions correspond to which `SwitchPosition` (either `STRAIGHT` or `CURVED`). This is achieved by 
   - the parameter `switchPosition` in it's constructor which states the initial `SwitchPosition` (default is `STRAIGHT`)
   ```python
-    motor = SwitchMotor(Port.B, switchPosition=SwitchPosition.CURVED)
+    motor = SwitchMotor(Port.B, switch_position=SwitchPosition.CURVED)
   ```
   - an information how much the motor needs to move to get to the other position. This can be achieved by the parameter `turn_degrees` which is equal to the degrees from the initial position to the other. However it is really complicated to figure out the right number (depends obviously on the gear ratio, ...). If `turn_degrees` is None (as it is by default), an auto calibration is done i.e. the motor moves left and right until the motor stalls. Make sure that the motor is connected to the switch otherwise it would move forever!
   ```python
@@ -133,10 +138,10 @@ Personally, I recommend to first running the program without including the curre
   ```
 - **Distance Sensors**: As described above multiple distance sensors are supported: `SwitchDistanceSensor`, `SwitchIRSensor`, `SwitchUltrasonicSensor`, `SwitchColorSensor`. All sensors have a parameter `criticalDistance` which refers to the distance from which the sensor should be triggered (detect a train). A larger `criticalDistance` means that also objects further away are recognized. Default values are given for each sensor type, but the perfect value for you might depend on the sensors's positioning and the lightning conditions. For me, the `SwitchDistanceSensor` works the most reliable.
  ```python
-  sensor = SwitchDistanceSensor(Port.A, criticalDistance=50) # critical distance in %
-  sensor = SwitchIRSensor(Port.B, criticalDistance=80) # critical distance in %
-  sensor = SwitchUltrasonicSensor(Port.C, criticalDistance=400) # critica distance in mm
-  sensor = SwitchColorSensor(Port.D, criticalDistance=70) # critical distance in %
+  sensor = SwitchDistanceSensor(Port.A, critical_distance=50) # critical distance in %
+  sensor = SwitchIRSensor(Port.B, critical_distance=80) # critical distance in %
+  sensor = SwitchUltrasonicSensor(Port.C, critical_distance=400) # critica distance in mm
+  sensor = SwitchColorSensor(Port.D, critical_distance=70) # critical distance in %
  ```
  - **Timeout**: Since the sensor usually does not trigger for the whole time a train is passing by (e.g. between two train trailers), a timeout is used to skip those gaps. Additionally, the timeout is needed if the motor moves *after* a train has passed. In that case the train still needs some time to pass the (last) switch (distance from sensor to the last switch). The length of the `timeout` can be set by using `sensor.set_init_timeout(40)` where 40 is the timeout value (also the default value). Note that the meaning of the timeout value depends on the `dt`-value (time in ms between two ticks) of the SwitchController. The default `dt`-value of 50ms combined with an timeout of 40 means that after 40 * 50ms = 2s without sensor triggering a train is considered to be passed completely.
 - **Rising/ Falling Edge** Two options when the switch moves are provided: The motor moves right when an incoming train is detected (`SwitchMode.RISING_EDGE`) or after a train has passed the sensor (and switch) completely (`SwitchMode.FALLING_EDGE`). The option can be set by using `sensor.set_switch_mode(SwitchMode.RISING_EDGE)`. However, I can only recommend using `SwitchMode.FALLING_EDGE` (default value) since the powered up motors seem to be too weak/ slow (the moving of the motor takes too long). Unless the distance between the sensor and the switch isn't far and/ or the trains are driving slow, the rising edge mode didn't work for me reliable with powered up motors. By the way the MINDSTORMS EV3 motors work with the rising edge mode.
@@ -146,11 +151,9 @@ Personally, I recommend to first running the program without including the curre
 ```
 
 ## MINDSTORMS (Robot Inventor 51515, SPIKE Prime 45678)
-The [PyBricks](https://pybricks.com/) code for these hubs works similar to the ones using the Powered Up Hubs. You just need to use the special code basis: [MINDSTORMS_51515.py](MINDSTORMS_51515.py). (I haven't tested it for the SPIKE Prime, but according to the PyBricks documentation, the code should work as well).
+The [PyBricks](https://pybricks.com/) code for these hubs works similar to the ones using the Powered Up Hubs. Just use [switch.py](switch.py) and your own configuration.
 
-> Currently, these hubs are only supported by the PyBricks beta, so make sure to use the right app: [https://beta.pybricks.com/](https://beta.pybricks.com/).
-
-Using the MINDSTORMS code basis, all [Powered Up Configuration Examples](#powered-up-configuration-part) can also be used for the MINDSTORMS Hubs. But because of the additional available ports, even more (complex) configurations become possible. Again you need to add the few lines to the program right below the line `# configure your switch layout here`.
+Using the MINDSTORMS code basis, all [Powered Up Configuration Examples](#powered-up-configuration-part) can also be used for the MINDSTORMS Hubs. But because of the additional available ports, even more (complex) configurations become possible. Again you need to add either the few lines at the end of the program or inside another file and import switch.py by `from switch import *`.
 
 <table>
 <tr>
@@ -166,9 +169,10 @@ sensor2 = SwitchColorSensor(Port.B)
 motor1 = SwitchMotor(Port.C)
 motor2 = SwitchMotor(Port.D)
 motor3 = SwitchMotor(Port.E)
-motor1.registerSuccessor(motor2)  
-controller.registerSensor(sensor1, motor1)
-controller.registerSensor(sensor2, motor3)
+motor1.register_successor(motor2)  
+controller.register_sensor(sensor1, motor1)
+controller.register_sensor(sensor2, motor3)
+controller.run()
 ```
 
   </td>
@@ -184,10 +188,11 @@ motor1 = SwitchMotor(Port.C)
 motor2 = SwitchMotor(Port.D)
 motor3 = SwitchMotor(Port.E)
 motor4 = SwitchMotor(Port.F)
-motor1.registerSuccessor(motor2, switchPosition=SwitchPosition.CURVED)  
-motor2.registerSuccessor(motor4, switchPosition=SwitchPosition.CURVED)
-controller.registerSensor(sensor1, motor1)
-controller.registerSensor(sensor2, motor3)
+motor1.register_successor(motor2, switch_position=SwitchPosition.CURVED)  
+motor2.register_successor(motor4, switch_position=SwitchPosition.CURVED)
+controller.register_sensor(sensor1, motor1)
+controller.register_sensor(sensor2, motor3)
+controller.run()
 ```
 
   </td>
@@ -203,10 +208,11 @@ motor1 = SwitchMotor(Port.C)
 motor2 = SwitchMotor(Port.D)
 motor3 = SwitchMotor(Port.E)
 motor4 = SwitchMotor(Port.F)
-motor2.registerSuccessor(motor3, switchPosition=SwitchPosition.STRAIGHT)  
-motor2.registerSuccessor(motor4, switchPosition=SwitchPosition.CURVED)
-controller.registerSensor(sensor1, motor1)
-controller.registerSensor(sensor2, motor2)
+motor2.registerSuccessor(motor3, switch_position=SwitchPosition.STRAIGHT)  
+motor2.registerSuccessor(motor4, switch_position=SwitchPosition.CURVED)
+controller.register_sensor(sensor1, motor1)
+controller.register_sensor(sensor2, motor2)
+controller.run()
 ```
 
   </td>
@@ -222,10 +228,11 @@ motor1 = SwitchMotor(Port.C)
 motor2 = SwitchMotor(Port.D)
 motor3 = SwitchMotor(Port.E)
 motor4 = SwitchMotor(Port.F)
-motor2.registerSuccessor(motor3, switchPosition=SwitchPosition.CURVED)  
-motor3.registerSuccessor(motor4, switchPosition=SwitchPosition.CURVED)
-controller.registerSensor(sensor1, motor1)
-controller.registerSensor(sensor2, motor2)
+motor2.register_successor(motor3, switch_position=SwitchPosition.CURVED)  
+motor3.register_successor(motor4, switch_position=SwitchPosition.CURVED)
+controller.register_sensor(sensor1, motor1)
+controller.register_sensor(sensor2, motor2)
+controller.run()
 ```
 
   </td>
@@ -241,9 +248,10 @@ sensor3 = SwitchDistanceSensor(Port.C)
 motor1 = SwitchMotor(Port.D)
 motor2 = SwitchMotor(Port.E)
 motor3 = SwitchMotor(Port.F)
-controller.registerSensor(sensor1, motor1)
-controller.registerSensor(sensor2, motor2)
-controller.registerSensor(sensor3, motor3)
+controller.register_sensor(sensor1, motor1)
+controller.register_sensor(sensor2, motor2)
+controller.register_sensor(sensor3, motor3)
+controller.run()
 ```
 
   </td>
@@ -275,7 +283,6 @@ To run python programs on an EV3, you first need to follow these [instructions](
 Of course not all possible combinations of sensors and motors are provided. In addition the programs aren't that flexible as the PyBricks ones. However the basic idea how to adjust the code for a certain sensor-motor-layout should be obvious.
 
 ## Known Issues
-- The variable/ method naming in the python files mixes CamelCasing and snake_casing. As a programmer, I really regret that I haven't been consistently using a single case system. However I don't have neither the time nor the motivation to make the naming consistent.
 - Some pictures of configurations are missing
 - As soon as communication between hubs is possible, this makes a lot of new features possible (large chained layouts are possible -> no limitation due to limited available ports). Furthermore, it would be awesome if PyBricks Hubs could connect to an app which supervises *all* hubs.
 
