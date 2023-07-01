@@ -258,3 +258,5 @@ controller.registerSensor(sensor, motor)
 # start the switch controller
 controller.run()
 
+# todo update (program generator)
+

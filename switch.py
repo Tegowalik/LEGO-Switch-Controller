@@ -1,11 +1,12 @@
-from pybricks.hubs import PrimeHub
 from pybricks.pupdevices import Motor, ColorDistanceSensor, InfraredSensor, ColorSensor, UltrasonicSensor
 from pybricks.parameters import Port, Direction, Button, Color, Stop, Side
 from pybricks.tools import wait
-from urandom import random
+from pybricks.hubs import ThisHub
+from urandom import random, uniform
 
 def enum(**enums):
     return type('Enum', (), enums)
+
 
 # SwitchPosition.STRAIGHT means a train would pass the switch in the straight direction
 # SwitchPosition.CURVED means a train would pass the switch in the curved direction (either left or right)
@@ -22,19 +23,19 @@ SwitchMode = enum(RISING_EDGE=1, FALLING_EDGE=2)
 # The default dt-value of 50ms combined with init_timeout of 40 means that after 40 * 50ms = 2s without sensor detection a train is considered to be passed completely.
 class SwitchSensor():
 
+    # todo use __new__ to auto configure sensor type based on current sensor
+
     def __init__(self, criticalDistance, switchMode=SwitchMode.FALLING_EDGE, init_timeout=40):
         self.criticalDistance = criticalDistance
         self.init_timeout = init_timeout
         self.set_switch_mode(switchMode)
+        self.state = False
 
 
-    # The 'timeout' is used as following: the timeout is resetted (i. e. set to a
-    # positive number) if a train is currently detected in front of the train. If no
-    # train can be detected this value is decremented. The check is only successful
-    # if the timout is not positive anymore (i. e. some time has been passed
-    # since a train has been detected and we are not in between waggons by accident)
-    # and the a train is currently in front the sensor
-    def check(self):
+    def tick(self):
+        self.state = self._tick()
+
+    def _tick(self):
         d = self.distance()
         if self.switchMode == SwitchMode.RISING_EDGE:
             if d < self.criticalDistance:
@@ -59,6 +60,18 @@ class SwitchSensor():
 
         return False
 
+    # The 'timeout' is used as following: the timeout is resetted (i. e. set to a
+    # positive number) if a train is currently detected in front of the train. If no
+    # train can be detected this value is decremented. The check is only successful
+    # if the timout is not positive anymore (i. e. some time has been passed
+    # since a train has been detected and we are not in between waggons by accident)
+    # and the a train is currently in front the sensor
+    def check(self):
+        return self.state
+
+    def is_blocked(self):
+        return self.timeout > 0
+
     def distance(self):
         return self.sensor.distance()
 
@@ -78,6 +91,9 @@ class SwitchSensor():
             self.timeout = 0
         else:
             self.timeout = -1
+
+    def sensors():
+        return {self}
 
 # a color distance sensor (LEGO item 88007)
 class SwitchDistanceSensor(SwitchSensor):
@@ -111,6 +127,69 @@ class SwitchColorSensor(SwitchSensor):
     def distance(self):
         return 100 - self.sensor.reflection()
 
+# a remote sensor i.e. a sensor that is connected to another hub
+class RemoteSensor(SwitchSensor):
+    # todo implement (placeholder so far)
+    pass
+
+class SmartSensor:
+
+    def __init__(self, *args, **kwargs):
+        self.pre_sensors = list(args) + kwargs.get('pre_sensors', [])
+        self.post_sensors = kwargs.get('post_sensors', {})
+        self.update_timeout()
+        self.update_init_timeout()
+        
+
+    def add_pre_sensor(self, sensor):
+        self.pre_sensors.append(sensor)
+        self.update_timeout()
+        self.update_init_timeout()
+        self.state = (False, [])
+
+    def add_post_sensor(self, sensor, path): # todo add more options like delay 
+        self.post_sensors[path] = sensor
+
+    def update_timeout(self):
+        self.timeout = max([s.timeout for s in self.pre_sensors])
+    
+    def update_init_timeout(self):
+        self.init_timeout = max([s.init_timeout for s in self.pre_sensors])
+
+    def tick():
+        self.state = self._tick()
+
+    def _tick(self):
+        post_conditions = [cond for cond, sensor in self.post_sensors.items() if sensor.is_blocked()]
+        print(post_conditions)
+        # first check if any presensor fires
+        any_fired = any([s.check() for s in self.pre_sensors])
+        print(any_fired)
+        if any_fired:
+            for s in self.pre_sensors:
+                s.reset()
+
+        return any_fired, post_conditions
+
+    def check(self):
+        return self.state
+        
+
+    def sensors(self):
+        return self.pre_sensors + list(self.post_sensors.values())
+
+    def reset(self):
+        for sensor in self.sensors():
+            sensor.reset()
+
+    def set_init_timeout(self, init_timeout):
+        for sensor in self.sensors():
+            sensor.set_init_timeout(init_timeout)
+
+    def set_switch_mode(self, switchMode : SwitchMode):
+        for sensor in self.sensors():
+            sensor.set_switch_mode(switchMode)
+
 # A representation of a motor for a switch. 
 # The corresponding (hardware) motor must have a rotation sensor, like most of the Technic motors and all of the Mindstorm motors have.
 # Params:
@@ -123,7 +202,7 @@ class SwitchColorSensor(SwitchSensor):
 class SwitchMotor:
     def __init__(self, 
             port : Port, 
-            switchPosition=SwitchPosition.STRAIGHT, 
+            switch_position=SwitchPosition.STRAIGHT, 
             direction=Direction.CLOCKWISE,
             probability_straight_to_curved=0.5,
             probability_curved_to_straight=0.5,
@@ -131,8 +210,8 @@ class SwitchMotor:
             power=750):
         self.probabilities = {SwitchPosition.STRAIGHT: probability_straight_to_curved,
                                 SwitchPosition.CURVED: probability_curved_to_straight}
-        self.switchPosition = switchPosition
-        self.initialPosition = switchPosition
+        self.switch_position = switch_position
+        self.initial_position = switch_position
         self.motor = Motor(port, direction)
         self.motor.reset_angle(0)
         self.motor.stop()
@@ -140,12 +219,16 @@ class SwitchMotor:
         self.power = power
         self.stop_mode = Stop.COAST
         self.display = None
+        self.next_path = None
 
         if turn_degrees is None:
             self.calibrate()
         else:
-            other_switch_position = SwitchPosition.STRAIGHT if self.switchPosition == SwitchPosition.CURVED else SwitchPosition.CURVED
-            self.angle = {switchPosition: 0, other_switch_position: turn_degrees}
+            other_switch_position = self.other_switch_position()
+            self.angle = {switch_position: 0, other_switch_position: turn_degrees}
+
+    def other_switch_position(self):
+        return SwitchPosition.STRAIGHT if self.switch_position == SwitchPosition.CURVED else SwitchPosition.CURVED
 
     def calibrate(self):
         self.motor.reset_angle(0)
@@ -158,17 +241,17 @@ class SwitchMotor:
             angle1 = int(angle1 - diff / 5)
             angle2 = int(angle2 + diff / 5)
 
-        other_switch_position = SwitchPosition.STRAIGHT if self.switchPosition == SwitchPosition.CURVED else SwitchPosition.CURVED
+        other_switch_position = self.other_switch_position()
         if angle1 < -angle2:
             self.motor.run_target(self.power, angle1)
-            self.angle = {self.switchPosition: angle1, other_switch_position: angle2}
+            self.angle = {self.switch_position: angle1, other_switch_position: angle2}
         else:
             self.motor.run_target(self.power, angle2)
-            self.angle = {self.switchPosition: angle2, other_switch_position: angle1}
+            self.angle = {self.switch_position: angle2, other_switch_position: angle1}
         self.motor.stop()
 
-    def registerSuccessor(self, successor : SwitchMotor, switchPosition : SwitchPosition):
-        self.successors[switchPosition] = successor
+    def register_successor(self, successor : SwitchMotor, switch_position : SwitchPosition):
+        self.successors[switch_position] = successor
 
     def switch_angle(self):
         return self.angle1 if self.angle == self.angle2 else self.angle2
@@ -176,38 +259,110 @@ class SwitchMotor:
     def move(self):
         if self.display is not None:
             self.display.cross()
-        if self.switchPosition == SwitchPosition.STRAIGHT:
-            self.switchPosition = SwitchPosition.CURVED
-        elif self.switchPosition == SwitchPosition.CURVED:
-            self.switchPosition = SwitchPosition.STRAIGHT
-        angle = self.angle[self.switchPosition]
+        if self.switch_position == SwitchPosition.STRAIGHT:
+            self.switch_position = SwitchPosition.CURVED
+        elif self.switch_position == SwitchPosition.CURVED:
+            self.switch_position = SwitchPosition.STRAIGHT
+        angle = self.angle[self.switch_position]
         self.motor.run_target(self.power, angle, then=self.stop_mode, wait=True)      
 
-    def moveRandom(self):
-        if random() < self.probabilities[self.switchPosition]:
+    def move_random(self):
+        if random() < self.probabilities[self.switch_position]:
             self.move()
-        self.moveSuccessorRandom()
+        self.move_successor_random()
 
-    def moveSuccessorRandom(self):
-        if self.switchPosition in self.successors.keys():
-            self.successors[self.switchPosition].moveRandom()
+    # paths are those allowed paths
+    def move_smart(self, check, paths):
+        if self.next_path in paths:
+            # go back to the last path that has been blocked before, but is free again
+            self.move_path(self.nextPath)
+            self.next_path = None
+        else:
+            current_path = self.current_path()
+            needs2move = currentPath in paths
+            if (check and random() < self.probabilities[self.switch_position]) or needs2move:
+                # we need to move (at least if a new path is available)
+                paths = [p for p in paths if p is not current_path]
+                if len(paths) == 0:
+                    # no 'good' path is available, so stay for now, and probably 
+                    pass
+                else:
+                    # todo choose random path based on probabilities!!!
+                    path_weights = [self._get_path_probability(p) for p in paths]
+                    path = self._get_random_path(paths, path_weights)
+                    
+                    self.move_path(path)
+                    if needs2move:
+                        # make sure to move back to the now blocked path once this path is free again
+                        self.next_path = current_path
+                    else:
+                        self.next_path = None 
+
+    def move_path(self, path):
+        if path[0] != self.switch_position:
+            self.move()
+        if self.switch_position in self.successors:
+            self.successors[self.switch_position].move_path(path[1:])
+
+    def current_path(self):
+        return [self.switch_position] + self.successors.get(self.switch_position, [])
+
+    def move_successor_random(self):
+        if self.switch_position in self.successors.keys():
+            self.successors[self.switch_position].move_random()
 
     def reset(self):
-        if self.switchPosition != self.initialPosition:
+        if self.switch_position != self.initial_position:
             self.move()
         for motor in self.successors.values():
             motor.reset()
 
-    def setDisplay(self, display: LightMatrix):
+    def set_display(self, display: LightMatrix):
         self.display = display
         for successor in self.successors.values():
-            successor.setDisplay(display)
+            successor.set_display(display)
+
+    def _get_path_probability(self, path, mul=True):
+        d = path[0]
+        if d == self.probabilities[self.switch_position]:
+            prob = 1 - self.probabilities[self.switch_position]
+        else:
+            prob = self.probabilities[self.switch_position]
+        
+        if d in self.successors:
+            probs = [prob] + self.successors[d]._get_path_probability(path[1:], mul=False)
+        else:
+            probs = [prob]
+
+        if mul:
+            result = 1
+            for p in probs:
+                result *= p
+            return result
+
+        return probs
+
+    # returns a random path whith weighted probabilities
+    # this has a similar behaviour as the ususal python random.choices(paths, weights=weights, k=1)[0]
+    def _get_random_path(self, paths, weights=None):
+        if weights is None:
+            return random.choice(paths)
+        
+        total_weight = sum(weights)
+        choices = []
+        
+        rand = uniform(0, total_weight)
+        cumulative_weight = 0
+        
+        for i, item in enumerate(paths):
+            cumulative_weight += weights[i]
+            if rand <= cumulative_weight:
+                return item
 
 class LightMatrix():
 
     def __init__(self, hub):
         self.hub = hub
-
 
     def update(self, timeouts, init_timeouts):
         amount = len(timeouts)
@@ -232,7 +387,7 @@ class LightMatrix():
     def update_one(self, timeouts, init_timeouts):
         proportion = timeouts[0] / init_timeouts[0]
         matrix = [[self._convert(j * 5 + i + 1, 25, proportion) for i in range(5)] for j in range(5)]
-        hub.display.icon(matrix)
+        self.hub.display.icon(matrix)
     
     def update_two(self, timeouts, init_timeouts):
         data = []
@@ -241,7 +396,7 @@ class LightMatrix():
             m = [[self._convert(j * 2 + i + 1, 10, proportion) for i in range(2)] for j in range(5)]
             data.append(m)
         matrix = [[data[0][i][0], data[0][i][1], 0, data[1][i][0], data[1][i][1]] for i in range(5)]
-        hub.display.icon(matrix)
+        self.hub.display.icon(matrix)
 
     def update_three(self, timeouts, init_timeouts):
         data = []
@@ -250,30 +405,43 @@ class LightMatrix():
             m = [self._convert(j + 1, 5, proportion) for j in range(5)]
             data.append(m)
         matrix = [[data[0][i], 0, data[1][i], 0, data[2][i]] for i in range(5)]
-        hub.display.icon(matrix)
+        self.hub.display.icon(matrix)
 
     def cross(self):
         matrix = [[100, 0, 0, 0, 100], [0, 100, 0, 100, 0], [0, 0, 100, 0, 0], [0, 100, 0, 100, 0], [100, 0, 0, 0, 100]]
-        hub.display.icon(matrix)
+        self.hub.display.icon(matrix)
 
 
 class SwitchController():
 
     def __init__(self, hub=None, dt=50):
         self.sensors = {} # map from sensors to motors
-        self.sensorList = [] # preserves order for correct update of the LightMatrix
+        self.sensor_list = [] # preserves order for correct update of the LightMatrix
         self.dt = dt
+        if not hub:
+            hub = ThisHub()
         self.hub = hub
-        self.initializeHub()
-        self.display = LightMatrix(hub)
+        self.initialize_hub()
+        if hasattr(self.hub, 'display'):
+            self.display = LightMatrix(hub)
+        else:
+            self.display = None
         
-    def registerSensor(self, sensor : SwitchSensor, motor):
+    def register_sensor(self, sensor : SwitchSensor, motor):
         self.sensors[sensor] = motor
         self.sensorList.append(sensor)
-        motor.setDisplay(self.display)
+        motor.set_display(self.display)
+
+    def buttons(self):
+        if hasattr(self.hub, 'buttons'):
+            return self.hub.buttons.pressed()
+        elif hasattr(self.hub, 'button'):
+            return self.hub.button.pressed()
+        else:
+            raise ValueError()
 
     def run(self):
-        while Button.CENTER not in self.hub.buttons.pressed():
+        while Button.CENTER not in self.buttons():
             self.tick()
             wait(self.dt)
         self.color(Color.BLUE)
@@ -281,13 +449,19 @@ class SwitchController():
         self.hub.system.shutdown()
 
     def tick(self):
+        for sensor in self.all_sensors():
+            sensor.tick()
 
         for sensor in self.sensors:
-            if sensor.check():
+            check = sensor.check()
+            if check is True:
                 self.color(Color.RED)
-                self.sensors[sensor].moveRandom()
+                self.sensors[sensor].move_random()
+            elif isinstance(check, tuple):
+                self.color(Color.RED)
+                self.sensors[sensor].move_smart(*check)
         
-        timeouts = [sensor.timeout for sensor in self.sensorList]
+        timeouts = [sensor.timeout for sensor in self.sensor_list]
         max_timeout = max(timeouts)
         init_timeouts = [sensor.init_timeout for sensor in self.sensorList]
         init_timeout = max(init_timeouts)
@@ -301,26 +475,34 @@ class SwitchController():
             self.color(Color.YELLOW)
 
         # update status light matrix
-        if self.hub != None:
+        if self.display:
             self.display.update(timeouts, init_timeouts)
 
+    def all_sensors():
+        sensors = set()
+        for s in self.sensors:
+            sensors.update(s.sensors)
+        print(sensors)
+        return sensors
+
     def reset(self):
-        for sensor in self.sensors:
+        for sensor in self.all_sensors():
             self.sensors[sensor].reset()
 
     def color(self, color : Color):
-        if self.hub is not None:
+        if self.hub:
             self.hub.light.on(color)
 
-    def initializeHub(self):
-        if self.hub is not None:
+    def initialize_hub(self):
+        if self.hub:
             self.hub.system.set_stop_button(None)
         self.color(Color.GREEN)
 
-hub = PrimeHub()
-controller = SwitchController(hub)
-
-# configure your switch layout here
-
-# start the switch controller
-controller.run()
+__all__ = [
+    # PyBricks classes (that needs to be exported)
+    'Port',
+    # Switch classes
+    'SwitchPosition', 'SwitchMode', 'SwitchSensor', 'SwitchDistanceSensor',
+    'SwitchIRSensor', 'SwitchUltrasonicSensor', 'SwitchColorSensor',
+    'RemoteSensor', 'SmartSensor', 'SwitchMotor', 'SwitchController'
+]
