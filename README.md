@@ -110,7 +110,7 @@ controller.run()
 </tr>
 </table>
 
-Note that for the [City Hub](https://www.lego.com/en-us/product/hub-88009) (the hub used for the City trains), only the first example can be used since only two ports are available (see [here](examples/CityHub_1.py)). In particular, another special program is available for this case which is easier to understand (esspecially if you are not familiar with object oriented programming): [CityHub_easy.py](CityHub_easy.py).
+Note that for the [City Hub](https://www.lego.com/en-us/product/hub-88009) (the hub used for the City trains), only the first example can be used since only two ports are available (see [here](examples/1sensor_1motor.py)). In particular, another special program is available for this case which is easier to understand (esspecially if you are not familiar with object oriented programming): [CityHub_easy.py](CityHub_easy.py).
 
 Personally, I recommend to first running the program without including the current program to the hub's firmware. So you can easily experiment different settings and see what fits your purposes best (errors can be seen in the terminal). Once the program is ready, flash the hub and include the current program to the firmware (Currently this option is available under "Settings" -> "Firmware" -> "Include current program"). This causes that the flashed program is executed whenever the hub is started in the future - unless you reflash it again. You can easily reflash the original LEGO firmware by connecting the hub to the powered up app. The disadvantage of flashing the program to the firmware is that you can no longer see the terminal output, so make sure that the program runs without errors before doing this.
 

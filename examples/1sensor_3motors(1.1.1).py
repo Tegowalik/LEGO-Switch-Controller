@@ -919,19 +919,18 @@ __all__ = [
 ]
 
 
-hub = ThisHub()
-hub.display.orientation(Side.BOTTOM)
-controller = SwitchController(hub)
+# creates a chained 3 motor layout with one sensor
+controller = SwitchController()
 
-# configure your switch layout here
-sensor1 = SwitchUltrasonicSensor(Port.F)
-sensor2 = SwitchIRSensor(Port.E)
+sensor = SwitchSensor(Port.A, critical_distance=70)
+motor1 = SwitchMotor(Port.B, probability_curved_to_straight=0.25, probability_straight_to_curved=1)
+motor2 = SwitchMotor(Port.C, probability_curved_to_straight=0.33, probability_straight_to_curved=0.67)
+motor3 = SwitchMotor(Port.D, probability_curved_to_straight=0.7, probability_straight_to_curved=0.7)
 
-motor1 = SwitchMotor(Port.D, probability_curved_to_straight=0.8, probability_straight_to_curved=0.8)
-motor2 = SwitchMotor(Port.C, probability_curved_to_straight=0.4, probability_straight_to_curved=0.6)
+motor1.register_successor(motor2, SwitchPosition.CURVED)
+motor2.register_successor(motor3, SwitchPosition.CURVED)
 
-controller.register_sensor(sensor1, motor1)
-controller.register_sensor(sensor2, motor2)
+controller.register_sensor(sensor, motor1)
 
 # start the switch controller
 controller.run()

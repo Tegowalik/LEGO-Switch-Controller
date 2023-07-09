@@ -919,19 +919,11 @@ __all__ = [
 ]
 
 
-hub = ThisHub()
-hub.display.orientation(Side.BOTTOM)
-controller = SwitchController(hub)
+controller = SwitchController()
 
-# configure your switch layout here
-sensor1 = SwitchUltrasonicSensor(Port.F)
-sensor2 = SwitchIRSensor(Port.E)
-
-motor1 = SwitchMotor(Port.D, probability_curved_to_straight=0.8, probability_straight_to_curved=0.8)
-motor2 = SwitchMotor(Port.C, probability_curved_to_straight=0.4, probability_straight_to_curved=0.6)
-
-controller.register_sensor(sensor1, motor1)
-controller.register_sensor(sensor2, motor2)
+sensor = SwitchSensor(Port.A, critical_distance=70)
+motor = SwitchMotor(Port.B, probability_curved_to_straight=0.8, probability_straight_to_curved=0.8)
+controller.register_sensor(sensor, motor)
 
 # start the switch controller
 controller.run()
