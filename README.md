@@ -165,6 +165,7 @@ The examples below show the usage. The post-sensors are configured using a path 
   controller.register_sensor(smart_sensor, motor)
   controller.run()
 ```
+This example illustrates like this: <img width="326" alt="image" src="https://github.com/Tegowalik/LEGO-Switch-Controller/assets/65446429/71a4bf76-7d45-446e-999c-b6fe6f90c0e4">
 
 ```python
   pre_sensor1 = SwitchSensor(Port.A)
@@ -182,6 +183,8 @@ The examples below show the usage. The post-sensors are configured using a path 
   controller.register_sensor(smart_sensor, motor)
   controller.run()
 ```
+<img width="263" alt="image" src="https://github.com/Tegowalik/LEGO-Switch-Controller/assets/65446429/30d40bdc-c121-4bf6-90bc-deb0ce94ad6d">
+
 - **Timeout**: Since the sensor usually does not trigger for the whole time a train is passing by (e.g. between two train trailers), a timeout is used to skip those gaps. Additionally, the timeout is needed if the motor moves *after* a train has passed. In that case the train still needs some time to pass the (last) switch (distance from sensor to the last switch). The length of the `timeout` can be set by using `sensor.set_init_timeout(40)` or `SwitchSensor(Port.A, init_timeout=40)` where 40 is the timeout value. Note that the meaning of the timeout value depends on the `dt`-value (time in ms between two ticks) of the SwitchController. The default `dt`-value of 50ms combined with an timeout of 40 means that after 40 * 50ms = 2s without sensor triggering a train is considered to be passed completely. The default is `init_timeout=20`.
 - **Rising/ Falling Edge** Two options when the switch moves are provided: The motor moves right when an incoming train is detected (`SwitchMode.RISING_EDGE`) or after a train has passed the sensor (and switch) completely (`SwitchMode.FALLING_EDGE`). The option can be set by using `sensor.set_switch_mode(SwitchMode.RISING_EDGE)`. However, I can only recommend using `SwitchMode.FALLING_EDGE` (default value) since the powered up motors seem to be too weak/ slow (the moving of the motor takes too long). Unless the distance between the sensor and the switch isn't far and/ or the trains are driving slow, the rising edge mode didn't work for me reliable with powered up motors. By the way the MINDSTORMS EV3 motors are using the rising edge mode.
 ```
