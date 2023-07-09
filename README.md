@@ -52,7 +52,7 @@ You can easily adjust the configuration depending on your actual switch layout a
 <td>
 
 ```python
-sensor = SwitchDistanceSensor(Port.A)
+sensor = SwitchSensor(Port.A)
 motor = SwitchMotor(Port.B)
 controller.register_sensor(sensor, motor)
 controller.run()
@@ -66,7 +66,7 @@ controller.run()
 <td>
 
 ```python
-sensor = SwitchDistanceSensor(Port.A)
+sensor = SwitchSensor(Port.A)
 motor1 = SwitchMotor(Port.B)
 motor2 = SwitchMotor(Port.C)
 motor1.register_successor(motor2, SwitchPosition.CURVED)
@@ -82,7 +82,7 @@ controller.run()
 <td>
 
 ```python
-sensor = SwitchDistanceSensor(Port.A)
+sensor = SwitchSensor(Port.A)
 motor1 = SwitchMotor(Port.B)
 motor2 = SwitchMotor(Port.C)
 motor3 = SwitchMotor(Port.D)
@@ -100,8 +100,8 @@ controller.run()
 <td>
 
 ```python
-sensor1 = SwitchIRSensor(Port.A)
-sensor2 = SwitchUltrasonicSensor(Port.C)
+sensor1 = SwitchSensor(Port.A)
+sensor2 = SwitchSensor(Port.C)
 motor1 = SwitchMotor(Port.B)
 motor2 = SwitchMotor(Port.D)
 controller.register_sensor(sensor1, motor1)
@@ -209,8 +209,8 @@ Of course all [Powered Up Configuration Examples](#powered-up-configuration-part
 <td>
 
 ```python
-sensor1 = SwitchUltrasonicSensor(Port.A)
-sensor2 = SwitchColorSensor(Port.B)
+sensor1 = SwitchSensor(Port.A)
+sensor2 = SwitchSensor(Port.B)
 motor1 = SwitchMotor(Port.C)
 motor2 = SwitchMotor(Port.D)
 motor3 = SwitchMotor(Port.E)
@@ -227,8 +227,8 @@ controller.run()
 <td>
 
 ```python
-sensor1 = SwitchUltrasonicSensor(Port.A)
-sensor2 = SwitchColorSensor(Port.B)
+sensor1 = SwitchSensor(Port.A)
+sensor2 = SwitchSensor(Port.B)
 motor1 = SwitchMotor(Port.C)
 motor2 = SwitchMotor(Port.D)
 motor3 = SwitchMotor(Port.E)
@@ -247,8 +247,8 @@ controller.run()
 <td>
 
 ```python
-sensor1 = SwitchUltrasonicSensor(Port.A)
-sensor2 = SwitchColorSensor(Port.B)
+sensor1 = SwitchSensor(Port.A)
+sensor2 = SwitchSensor(Port.B)
 motor1 = SwitchMotor(Port.C)
 motor2 = SwitchMotor(Port.D)
 motor3 = SwitchMotor(Port.E)
@@ -267,8 +267,8 @@ controller.run()
 <td>
 
 ```python
-sensor1 = SwitchUltrasonicSensor(Port.A)
-sensor2 = SwitchColorSensor(Port.B)
+sensor1 = SwitchSensor(Port.A)
+sensor2 = SwitchSensor(Port.B)
 motor1 = SwitchMotor(Port.C)
 motor2 = SwitchMotor(Port.D)
 motor3 = SwitchMotor(Port.E)
