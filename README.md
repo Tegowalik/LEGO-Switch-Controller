@@ -151,6 +151,9 @@ Personally, I recommend to first running the program without including the curre
   - A *pre-sensor* is basically a normal Distance Sensor as described above, i.e. an instance of `SwitchSensor`. Those sensors are intended to be placed in front of the switch in order to detect incoming trains of the observed switch. Note that you can also use multiple sensors to detect an incoming train. This might lead to a more reliable train detection. Additionally, this can prevent that the switch moves just before a train drives in front of the sensor. Since the moving takes a little bit, this can derail the train (if the train is too fast and the sensor is too close to the switch). By using an additional sensor more away from the switch, this can be prevented.
   - A *post-sensor* is a sensor which knows if an output of this switch layout is currently blocked. The smart decision will prevent that trains are directed to a blocked track. After the blocked track becomes free again, the switch will automatically move back to this track. Since a post-sensor is also an instance of `SwitchSensor`, it can also be used additionally as normal sensor in another switch setup. In the future, it will be even possible to capture sensors of other hubs via Bluetooth (Not implemented yet).
 
+> **Note**
+> The `SmartSensor` is a new feature and not well tested yet. If you recognize any unexpected behavior, please create an issue with a detailed description of the problem.
+
 The examples below show the usage. The post-sensors are configured using a path of `SwitchDirection`s, i.e. `(SwitchDirection.STRAIGHT, SwitchDirection.CURVED)` means that the post-sensor captures the corresponding output of the switch layout. Note that you need to write an additional comma if you want to create a `tuple` of size 1 e.g. `(SwitchDirection.STRAIGHT,)`. 
 ```python
   # example with two pre sensors
@@ -174,6 +177,7 @@ This example illustrates like this: <img width="326" alt="image" src="https://gi
   post_sensor1 = SwitchSensor(Port.B, post_sensor_delay=100)
   # post sensor 2 should block the track for additional 40*dt=40*50ms=2s after the train passed
   post_sensor2 = SwitchSensor(Port.C, post_sensor_init_timeout=50)
+  # post_sensor1 captures the track behind the output STRAIGHT -> CURVED (i.e. go the first switch STRAIGHT, the 2nd one curved)
   post_sensors = {(SwitchDirection.STRAIGHT, SwitchDirection.CURVED): post_sensor1, (SwitchDirection.CURVED,): post_sensor2}
   smart_sensor = SmartSensor(pre_sensor, post_sensors=post_sensors)
   motor1 = SwitchMotor(Port.D)
@@ -330,5 +334,6 @@ Of course not all possible combinations of sensors and motors are provided. In a
 ## Known Issues
 - Some pictures of configurations are missing
 - As soon as communication between hubs is possible, this makes a lot of new features possible (large chained layouts are possible -> no limitation due to limited available ports). Furthermore, it would be awesome if PyBricks Hubs could connect to an app which supervises *all* hubs.
+- The `SmartSensor` is a new feature and not well tested yet
 
-If you find any unexpected behaviour or have a feature request, please create an issue or a pull request.
+If you find any unexpected behavior or have a feature request, please create an issue or a pull request.
