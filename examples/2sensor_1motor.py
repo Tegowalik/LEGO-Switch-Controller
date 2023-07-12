@@ -919,22 +919,13 @@ __all__ = [
 ]
 
 
-hub = PrimeHub()
-hub.display.orientation(Side.BOTTOM)
-controller = SwitchController(hub)
-# configure your switch layout here
-sensor1 = SwitchSensor(Port.A)
-sensor1.set_init_timeout(60)
-sensor2 = SwitchSensor(Port.D)
-sensor2.set_init_timeout(20)
-sensor3 = SwitchSensor(Port.E)
-motor1 = SwitchMotor(Port.C, probability_curved_to_straight=0.8, probability_straight_to_curved=0.8)
-motor2 = SwitchMotor(Port.F, probability_curved_to_straight=0.8, probability_straight_to_curved=0.8)
-motor3 = SwitchMotor(Port.B, probability_curved_to_straight=0.8, probability_straight_to_curved=0.8)
+controller = SwitchController()
 
-controller.register_sensor(sensor2, motor2)
-controller.register_sensor(sensor3, motor3)
-controller.register_sensor(sensor1, motor1)
+pre_sensor = SwitchSensor(Port.A)
+post_sensor = SwitchSensor(Port.B, post_sensor_init_timeout=50, post_sensor_delay=100)
+post_sensors = {(SwitchPosition.STRAIGHT,): post_sensor}
+smart_sensor = SmartSensor(pre_sensor, post_sensors=post_sensors)
 
-# start the switch controller
+motor = SwitchMotor(Port.C)
+controller.register_sensor(smart_sensor, motor)
 controller.run()
