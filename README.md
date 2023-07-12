@@ -336,4 +336,4 @@ Of course not all possible combinations of sensors and motors are provided. In a
 - As soon as communication between hubs is possible, this makes a lot of new features possible (large chained layouts are possible -> no limitation due to limited available ports). Furthermore, it would be awesome if PyBricks Hubs could connect to an app which supervises *all* hubs.
 - The `SmartSensor` is a new feature and not well tested yet
 
-If you find any unexpected behavior or have a feature request, please create an issue or a pull request.
+If you find any unexpected behavior or have a feature request, please create an [issue](https://github.com/Tegowalik/LEGO-Switch-Controller/issues) or a pull request.
