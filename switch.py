@@ -225,7 +225,7 @@ The ultrasonic sensor known from LEGO Mindstorms 51515 (LEGO part 37316c01)
 class SwitchUltrasonicSensor(SwitchSensor_):
     
     # critical distance in mm
-    def __init__(self, port : Port, criticalDistance=120, *args, **kwargs):
+    def __init__(self, port : Port, critical_distance=120, *args, **kwargs):
         super().__init__(critical_distance, *args, **kwargs)
         self.sensor = UltrasonicSensor(port)
         self.port = port
