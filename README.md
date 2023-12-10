@@ -36,7 +36,7 @@ from switch import *
 sensor = SwitchSensor(Port.A)
 motor = SwitchMotor(Port.B)
 controller = SwitchController()
-controller.register_sensor(smart_sensor, motor)
+controller.register_sensor(sensor, motor)
 controller.run()
 ```
 
